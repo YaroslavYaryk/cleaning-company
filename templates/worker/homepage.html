@@ -1,0 +1,10 @@
+{% extends '../base/base.html' %}
+{% load static %}
+{% block link %}
+    <title>Worker Page</title>
+    <link rel="stylesheet" href="{% static 'css/worker/home.css' %}">
+{% endblock link %}
+{% block section %}
+    <p>WORKER HOME PAGE</p>
+    <p>{{ user.email }}</p>
+{% endblock section %}
