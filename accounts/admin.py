@@ -28,6 +28,7 @@ class UserAdmin(BaseAdmin):
         "last_name",
         "phone",
         "birthdate",
+        "address",
         "personal_number",
         "account_number",
         "picture",

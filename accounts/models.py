@@ -65,6 +65,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=255, null=True)
     last_name = models.CharField(max_length=255, null=True)
     picture = models.ImageField(upload_to="images/users", blank=True)
+    address = models.CharField(max_length=255, null=True)
     phone = models.CharField(max_length=50, blank=True)
     birthdate = models.DateField(null=True, blank=True)
     personal_number = models.IntegerField(null=True)

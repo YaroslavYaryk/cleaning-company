@@ -32,15 +32,35 @@
                                     </p>
                                 </div>
                             </div>
+                            {% if messages %}
+                                <div class="messages">
+                                    {% for message in messages %}
+                                        {% if message.tags == 'error' %}
+                                            <div class="alert alert-danger" role="alert">{{ message }}</div>
+                                        {% elif message.tags == 'critical' %}
+                                            <div class="alert alert-primary" role="alert">{{ message }}</div>
+                                        {% else %}
+                                            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {% if form.errors %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            {% endif %}
                             <form method="POST" class="signin-form">
-                                {% csrf_token %}
+{% csrf_token %}
                                 <div class="form-group mb-3">
                                     <label class="label" for="name">Email</label>
-                                    {{ form.username }}
+{{ form.username }}
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="label" for="password">Password</label>
-                                    {{ form.password }}
+{{ form.password }}
                                 </div>
                                 <div class="form-group">
                                     <button type="submit"
@@ -60,7 +80,7 @@
                                 </div>
                             </form>
                             <p class="text-center">
-                                Not a member? <a data-toggle="tab" href="{% url 'register' %}">Sign Up</a>
+                                                                                                                                                                                                                                                                Not a member? <a data-toggle="tab" href="{% url 'register' %}">Sign Up</a>
                             </p>
                         </div>
                     </div>
@@ -68,8 +88,8 @@
             </div>
         </div>
     </section>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 {% endblock section %}
