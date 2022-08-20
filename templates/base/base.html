@@ -83,11 +83,17 @@
                             <ul class="sub-menu">
                                 <li class="sub-menu-item">
                                     <img src="{% static 'images/user.png' %}" width="20"  alt="">
-                                    <a style="margin-left: -15px;"  href="{% url 'profile' %}">Profile</a>
+                                    <a style="; text-decoration: none;" href="{% url 'profile' %}">Profile</a>
+                                </li>
+                                <li class="sub-menu-item">
+                                    <img src="{% static 'images/padlock.png' %}" width="20"  alt="">
+                                    <a style="text-align:left;
+                                              text-decoration: none;"
+                                       href="{% url 'change_password' %}">Change password</a>
                                 </li>
                                 <li class="sub-menu-item">
                                     <img src="{% static 'images/logout.png' %}" width="20"  alt="">
-                                    <a style="margin-left: -15px;" href="{% url 'logout'  %}">Logout</a>
+                                    <a style="; text-decoration: none;" href="{% url 'logout'  %}">Logout</a>
                                 </li>
                             </ul>
                         </li>
@@ -95,6 +101,23 @@
                 </nav>
             </center>
         </header>
+        {% block messages %}
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <div class="alert alert-danger" role="alert">{{ message }}</div>
+                        {% elif message.tags == 'critical' %}
+                            <div class="alert alert-primary" role="alert">{{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">
+{{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock messages %}
         {% block section %}
         {% endblock section %}
         {% block javascript %}

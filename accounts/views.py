@@ -7,7 +7,10 @@ from django.contrib import messages
 from .services import handle_user
 from .forms import ChangeForm, LoginUserForm, RegisterUserForm
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 class RegisterUser(SuccessMessageMixin, CreateView):
@@ -76,3 +79,52 @@ class LogoutUser(LogoutView, SuccessMessageMixin):
 
     next_page = "home"
     success_message = "Logout successfully"
+
+
+@login_required(login_url="login")
+def get_profile(request):
+
+    user = request.user
+
+    context = {"user": user}
+
+    return render(request, "base/profile.html", context=context)
+
+
+@login_required(login_url="login")
+def get_profile_edit(request):
+
+    user = request.user
+    if request.method == "POST":
+        form = ChangeForm(request.POST, request.FILES, instance=user)
+
+        if form.is_valid:
+            try:
+                print(request.POST, request.FILES)
+                form.save()
+                return HttpResponseRedirect(reverse("profile"))
+            except Exception as er:
+                messages.error(request, er)
+
+    form = ChangeForm(instance=user)
+
+    context = {"user": user, "form": form}
+
+    return render(request, "base/profile_edit.html", context=context)
+
+
+@login_required(login_url="/accounts/login")
+def change_password(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            return HttpResponseRedirect(reverse("home"))
+        else:
+            messages.error(request, "Ups, noe gikk galt. Prøv på nytt")
+
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, "accounts/change_password.html", {"form": form})

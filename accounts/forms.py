@@ -86,9 +86,12 @@ class ChangeForm(forms.ModelForm):
             "first_name",
             "last_name",
             "email",
+            "address",
             "phone",
             "picture",
             "birthdate",
+            "personal_number",
+            "account_number",
         )
 
     def clean(self):
