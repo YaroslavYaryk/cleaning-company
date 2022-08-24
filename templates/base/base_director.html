@@ -1,20 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        {% block link %}
-        {% endblock link %}
-    </head>
-    <body>
-        <div class="top_block" style="display: flex;justify-content:space-between">
-            <div class="block"></div>
-            <div class="button_wrapper" style="background: #9ED2C6;  padding:10px">
-                <a style="text-decoration: none; color:red" href="{% url 'logout'  %}">logout</a>
-            </div>
-        </div>
-        {% block section %}
-        {% endblock section %}
-    </body>
-</html>
+{% extends './base.html' %}
+{% load static %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/worker/home.css' %}">
+{% endblock link %}
+{% block header_block %}
+    <li class="sub-menu-parent" tab-index="0">
+        <a class="title_link" href="#">Rooms</a>
+        <ul class="sub-menu">
+            <li>
+                <a class="title_link" href="#">Rooms</a>
+            </li>
+            <li>
+                <a class="title_link" href="{% url 'create_room' %}">Create room</a>
+            </li>
+        </ul>
+    </li>
+    <li class="sub-menu-parent" tab-index="0">
+        <a class="title_link" href="#">Work</a>
+        <ul class="sub-menu">
+            <li>
+                <a class="title_link" href="#">Sub Item 1</a>
+            </li>
+            <li>
+                <a class="title_link" href="#">Sub Item 2</a>
+            </li>
+        </ul>
+    </li>
+    <li class="sub-menu-parent" tab-index="0">
+        <a class="title_link" href="#">Workers</a>
+        <ul class="sub-menu">
+            <li>
+                <a class="title_link" href="#">Sub Item 1</a>
+            </li>
+            <li>
+                <a class="title_link" href="#">Sub Item 2</a>
+            </li>
+        </ul>
+    </li>
+{% endblock header_block %}

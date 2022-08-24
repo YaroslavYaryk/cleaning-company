@@ -214,7 +214,7 @@ Birthdate
                 </div>
                 <div class="col-sm-9">
                   <div class="col-sm-12 text-secondary">
-{{ form.birthdate|add_class:'form-control datetimepicker' }}
+{{ form.birthdate|add_class:"form-control" }}
                   </div>
                 </div>
                 <div class="form-error">
@@ -289,6 +289,11 @@ Account number
   address_input.addEventListener('input', function (evt) {
       var address_view = document.getElementById("address_view")
       address_view.innerText = this.value
+  });
+  $(document).ready(function () {
+    $("#datetimepicker1").datetimepicker({
+      format: 'DD/MM/YYYY HH:mm',
+    });
   });
   </script>
 {% endblock javascript %}

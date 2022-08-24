@@ -105,6 +105,8 @@ def get_profile_edit(request):
                 return HttpResponseRedirect(reverse("profile"))
             except Exception as er:
                 messages.error(request, er)
+        else:
+            return "invalid"
 
     form = ChangeForm(instance=user)
 

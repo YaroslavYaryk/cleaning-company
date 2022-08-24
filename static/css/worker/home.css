@@ -1,3 +1,12 @@
 body {
     background: #E4F2F0;
 }
+
+.title_link {
+    text-decoration: none;
+}
+
+.title_link:hover {
+    text-decoration: none;
+    /* color: #54BAB9; */
+}

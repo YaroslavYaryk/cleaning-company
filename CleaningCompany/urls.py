@@ -24,7 +24,8 @@ from worker.views import index
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", index, name="home"),
-    path("account/", include("accounts.urls")),
+    path("accounts/", include("accounts.urls")),
+    path("director/", include("director.urls")),
     # serve
     #
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

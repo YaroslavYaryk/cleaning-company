@@ -7,6 +7,19 @@ from django.contrib.auth.forms import (
 )
 from .services.validators import validate_phone
 from .models import User
+from bootstrap_datepicker_plus.widgets import DatePickerInput
+
+
+class DatePickerInput(forms.DateInput):
+    input_type = "date"
+
+
+class TimePickerInput(forms.TimeInput):
+    input_type = "time"
+
+
+class DateTimePickerInput(forms.DateTimeInput):
+    input_type = "datetime"
 
 
 class RegisterUserForm(UserCreationForm):
@@ -49,8 +62,6 @@ class RegisterUserForm(UserCreationForm):
 class LoginUserForm(AuthenticationForm):
     """Login form class"""
 
-    pass
-
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "placeholder": "Password"}
@@ -70,15 +81,7 @@ class LoginUserForm(AuthenticationForm):
 
 class ChangeForm(forms.ModelForm):
 
-    birthdate = forms.DateTimeField(
-        input_formats=["%d/%m/%Y %H:%M"],
-        widget=forms.DateTimeInput(
-            attrs={
-                "class": "form-control datetimepicker-input",
-                "data-target": "#datetimepicker1",
-            }
-        ),
-    )
+    birthdate = forms.DateField(widget=DatePickerInput)
 
     class Meta:
         model = User
