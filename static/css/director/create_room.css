@@ -11208,3 +11208,12 @@ h5,
     background: #e3b04b;
     color: #fff;
 }
+
+.add_work_for_room:hover {
+    color: #e3b04b;
+    cursor: pointer;
+}
+
+.block_remove:hover {
+    cursor: pointer;
+}

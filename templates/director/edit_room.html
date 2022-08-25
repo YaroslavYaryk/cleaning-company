@@ -1,6 +1,7 @@
 {% extends '../base/base_director.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load director_tags %}
 {% block link %}
     <link rel="stylesheet" href="{% static 'css/director/create_room.css' %}">
 {% endblock link %}
@@ -27,7 +28,7 @@
                             <form class="signin-form" method="POST">
                                 <div class="">{% csrf_token %}</div>
                                 <div class="form-row" style="">
-                                    <div class="form-group col-md-12 mb-1">
+                                    <div class="form-group col-md-12 mb-3">
                                         <label style="margin-bottom: 0px;" class="label" for="password">Name</label>
                                         <div class="">{{ form.name|add_class:"form-control" }}</div>
                                     </div>
@@ -35,13 +36,36 @@
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1 add_room_work_wrapper">
                                         <label style="margin-bottom: 0px;" class="label" for="password">Room Work</label>
+                                        <div class="block mt-1 mb-3">
+                                            {% for elem in room_works %}
+                                                <div class="block_aditional_work" style='position: relative;'>
+                                                    <div class="block__item mb-2">
+                                                        <input style="height:40px"
+                                                               name="{{ elem.id|room_component_id }}"
+                                                               class="form-control"
+                                                               type="text"
+                                                               value="{{ elem.name }}">
+                                                    </div>
+                                                    <div class="block_remove"
+                                                         style="position: absolute;
+                                                                top:0;
+                                                                right:0;
+                                                                margin-top: 8px;
+                                                                margin-right: 8px;">
+                                                        <a href="{% url 'delete_room_work' room.slug elem.slug %}">
+                                                            <img src="{% static 'images/remove.png' %}" width="24px" alt="">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
                                         <div class="add_work-block mb-3"
                                              style="display: flex; justify-content:space-between; align-items:center">
                                             <div class="add_work-item">Add work</div>
                                             <div class="add_work-item add_work_for_room">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                     width="33"
-                                                     height="33"
+                                                     width="24"
+                                                     height="24"
                                                      fill="currentColor"
                                                      class="bi bi-plus-circle"
                                                      viewBox="0 0 16 16">
@@ -64,8 +88,8 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         var add_work_for_room = document.querySelector(".add_work_for_room")
@@ -74,24 +98,13 @@
             var add_work_block = document.querySelector(".add_work-block")
             const newElement = document.createElement("div");
             newElement.innerHTML = `<div class="block_aditional_work mb-3" style="position: relative">
-                <input style="height:40px; background: #FAF3E5;" class="form-control" type="text" name="room_work_${count}" id="room_work_${count}">
-                <div class="block_remove" style="position: absolute; right:0; top:0; margin-top: 4px; margin-right: 4px;">
-                    <img id="remove" src="{% static 'images/remove.png' %}" alt="">
+                <input style="height:40px; background: #FAF3E5;" class="form-control" type="text" name="room_component_${count}" id="room_component_${count}">
+                <div class="block_remove" style="position: absolute; right:0; top:0; margin-top: 8px; margin-right: 8px;">
+                    <img id="remove" width="24px" src="{% static 'images/remove.png' %}" alt="">
                 </div>
             </div>`;
             add_work_block.before(newElement); //в середину
-                
-            count += 1;  
-
+            count += 1;
         }
-
-        var add_room_work_wrapper = document.querySelector(".add_room_work_wrapper")
-        add_room_work_wrapper.onclick = (e) =>{
-            var aditionaLField = e.target.closest(".block_aditional_work")
-            if (e.target.id == "remove"  &&  aditionaLField){
-                aditionaLField.remove()
-            }
-        }
-
     </script>
 {% endblock section %}

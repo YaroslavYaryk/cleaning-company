@@ -1,0 +1,64 @@
+{% extends '../base/base_director.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load director_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+{% endblock link %}
+{% block section %}
+    <div class="container mt-3" style="">
+        <div class="block-wrapper">
+            {% for room in rooms %}
+                <div class="card mb-2">
+                    <div class="card-header">Room</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ room.name }}</h5>
+                        <div class="block" style="display: flex; justify-content:space-between">
+                            <div class="sp"></div>
+                            <div class="buttons">
+                                <a href="#"
+                                   id="room_component"
+                                   name="{{ room.id|room_component_id }}"
+                                   class="btn btn-info">Components</a>
+                                <a href="{% url 'edit_room' room.slug %}" class="btn btn-primary">Edit</a>
+                                <a href="{% url 'delete_room' room.slug %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                        <div class="d-none"
+                             style="display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 50px;"
+                             id="{{ room.id|room_component_id }}">
+                            {% for elem in room.id|room_components %}
+                                <div class="block" style="">
+                                    <div class="block_inner"
+                                         style="display: flex; align-items:center; gap:5px">
+                                        <div class="block_icon">
+                                            <img src="{% static 'images/success.png' %}" width="24px" alt="">
+                                        </div>
+                                        <div class="block_text">{{ elem.name }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        block_wrapper = document.querySelector(".block-wrapper")
+        if (block_wrapper){
+            block_wrapper.onclick = (e) =>{
+                if (e.target.id == "room_component"){
+                    var hidden_block = document.getElementById(e.target.name)
+                    if (hidden_block.className == "d-flex"){
+                        hidden_block.className = "d-none"
+                    }else{
+                        hidden_block.className = "d-flex"
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock section %}
