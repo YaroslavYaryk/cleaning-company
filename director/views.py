@@ -5,8 +5,9 @@ from django.urls.base import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
 from .services import handle_work
-from .forms import RoomCreate
+from .forms import RoomCreate, WorkerShiftCreate
 import re
+from accounts.services import handle_user
 
 # Create your views here.
 
@@ -35,7 +36,7 @@ def create_room(request):
 
 @login_required(login_url="login")
 def get_room_list(request):
-    rooms = handle_work.get_all_rooms()
+    rooms = handle_work.get_all_rooms()[0]
 
     context = {"rooms": rooms}
 
@@ -69,6 +70,7 @@ def edit_room(request, room_slug):
     return render(request, "director/edit_room.html", context)
 
 
+@login_required(login_url="login")
 def delete_room_work(request, room_slug, room_work_slug):
 
     try:
@@ -79,6 +81,7 @@ def delete_room_work(request, room_slug, room_work_slug):
     return HttpResponseRedirect(reverse("edit_room", kwargs={"room_slug": room_slug}))
 
 
+@login_required(login_url="login")
 def delete_room(request, room_slug):
 
     try:
@@ -87,3 +90,41 @@ def delete_room(request, room_slug):
         print(ex)
 
     return HttpResponseRedirect(reverse("room_list"))
+
+
+@login_required(login_url="login")
+def get_all_workers(request):
+
+    workers = handle_user.get_all_workers(request.user)
+
+    context = {"workers": workers}
+
+    return render(request, "director/worker_list.html", context)
+
+
+@login_required(login_url="login")
+def create_shift(request):
+
+    workers = handle_user.get_all_workers(request.user)
+
+    if request.method == "POST":
+        form = WorkerShiftCreate(workers, request.POST)
+
+        if form.is_valid():
+            print(request.POST)
+
+            return HttpResponseRedirect(reverse("create_shift"))
+
+    form = WorkerShiftCreate(workers)
+    rooms, rooms_json = handle_work.get_all_rooms()
+    room_works, room_works_json = handle_work.get_room_works()
+
+    context = {
+        "form": form,
+        "rooms": rooms,
+        "room_works": room_works,
+        "rooms_json": rooms_json,
+        "room_works_json": room_works_json,
+    }
+
+    return render(request, "director/create_shift.html", context)

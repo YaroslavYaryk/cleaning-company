@@ -1,4 +1,4 @@
-{% extends './base.html' %}
+{% extends request.user.admin|yesno:"base/base_director.html,base/base_worker.html" %}
 {% load static %}
 {% load widget_tweaks %}
 {% block link2 %}

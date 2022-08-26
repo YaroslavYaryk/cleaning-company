@@ -3,3 +3,12 @@
     flex-wrap: wrap;
     gap: 50px;
 }
+
+.link_name {
+    color: black;
+}
+
+.link_name:hover {
+    color: black;
+    text-decoration: none;
+}

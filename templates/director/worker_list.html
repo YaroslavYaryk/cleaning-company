@@ -1,0 +1,80 @@
+{% extends '../base/base_director.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load director_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+{% endblock link %}
+{% block section %}
+    <div class="container mt-3" style="widht:500px;  ">
+        <div class="block-wrapper"
+             style="display: grid; grid-template-columns: 1fr 1fr">
+            {% for worker in workers %}
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4"
+                             style="display: flex;
+                                    justify-content:center;
+                                    align-items:center;
+                                    margin-left: 20px;">
+                            {% if worker.picture %}
+                                <img src="{{ worker.picture.url }}"
+                                     class="img-fluid rounded-start"
+                                     style="width:100%;"
+                                     alt="...">
+                            {% else %}
+                                <img src="{% static 'images/avatar7.png' %}"
+                                     class="img-fluid rounded-start"
+                                     alt="...">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-7 pb-0" style="padding:0px; margin-bottom: -20px;">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a class="link_name" href="{% url 'profile' worker.id %}">{{ worker.full_name }}</a>
+                                </h5>
+                                <div class="block">
+                                    <table class="table">
+                                        <tbody style="font-size: 14px;">
+                                            <tr>
+                                                <td>Email</td>
+                                                <td>{{ worker.email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Phone</td>
+                                                <td>{{ worker.phone }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pers. num</td>
+                                                <td>{{ worker.personal_number }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Acc. num</td>
+                                                <td>{{ worker.account_number }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        block_wrapper = document.querySelector(".block-wrapper")
+        if (block_wrapper){
+            block_wrapper.onclick = (e) =>{
+                if (e.target.id == "room_component"){
+                    var hidden_block = document.getElementById(e.target.name)
+                    if (hidden_block.className == "d-flex"){
+                        hidden_block.className = "d-none"
+                    }else{
+                        hidden_block.className = "d-flex"
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock section %}

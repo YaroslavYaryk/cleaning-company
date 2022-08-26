@@ -1,0 +1,167 @@
+{% extends '../base/base_director.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/create_room.css' %}">
+{% endblock link %}
+{% block section %}
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                    <div class="wrap d-md-flex">
+                        {% comment %} <div class="img"
+      style="background-image: url({% static 'images/restaurant.jpg' %});"></div> {% endcomment %}
+                        <div class="login-wrap p-4 p-md-5" style=" width:100%">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h3 class="mb-4">Create Shift</h3>
+                                </div>
+                            </div>
+                            {% if form.errors %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                            {% endif %}
+                            <form class="signin-form" method="POST">
+                                <div class="">{% csrf_token %}</div>
+                                <div class="form-row" style="">
+                                    <div class="form-group col-md-12 mb-1">
+                                        <label style="margin-bottom: 0px;" class="label" for="password">User</label>
+                                        <div class="">{{ form.user|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="form-group col-md-12 mb-1">
+                                        <label style="margin-bottom: 0px;" class="label" for="password">Shift</label>
+                                        <div class="">{{ form.shift|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-row" style="">
+                                    <div class="form-group col-md-12 mb-1 add_room_work_wrapper">
+                                        <label style="margin-bottom: 0px;" class="label" for="password">Room</label>
+                                        <div class="add_work-block mb-3"
+                                             style="display: flex; justify-content:space-between; align-items:center">
+                                            <div class="add_work-item">Add room</div>
+                                            <div class="add_work-item add_work_for_room">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     width="33"
+                                                     height="33"
+                                                     fill="currentColor"
+                                                     class="bi bi-plus-circle"
+                                                     viewBox="0 0 16 16">
+<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit"
+                                            class="form-control btn btn-primary rounded submit px-3">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
+    <script type="text/javascript">
+        var add_work_for_room = document.querySelector(".add_work_for_room")
+        var count = 0
+        var rooms_json = JSON.parse("{{rooms_json|escapejs}}")
+        var room_works_json = JSON.parse("{{room_works_json|escapejs}}")
+        var used_rooms = [];
+        add_work_for_room.onclick = () =>{
+            var add_work_block = document.querySelector(".add_work-block")
+            const newElement = document.createElement("div");
+            newElement.className = 'block_aditional_work'
+            newElement.style.position = "relative"
+            newElement.style.marginBottom = "10px"
+
+            newElement.innerHTML = `
+                <div class="block_remove " style="position: absolute; right:0; top:0; margin-top: 12px; margin-right: 5px;">
+                    <img id="remove" src="{% static 'images/remove.png' %}" width="24px" alt="">
+                
+            </div>`;
+
+
+            var selectList = document.createElement("select");
+            selectList.id = `mySelect_${count}`;
+            selectList.className="form-control room_select"
+            var new_room_json = rooms_json.filter((el) => !used_rooms.includes(el.slug))
+            for (var i = 0; i < new_room_json.length; i++) {
+                var option = document.createElement("option");
+                option.value = new_room_json[i].slug;
+                option.text = new_room_json[i].name;
+                selectList.appendChild(option);
+            }
+            newElement.prepend(selectList)
+            add_work_block.before(newElement); //в середину
+            var room_selector = document.querySelector(`#${selectList.id}`)
+            room_selector.onchange = (e) =>{
+
+                selectList.name = e.target.value
+
+                const newRoomWorkElement = document.createElement("div");
+                newRoomWorkElement.className = 'room_work_block'
+                newRoomWorkElement.style.position = "relative"
+                newRoomWorkElement.style.marginBottom = "10px"
+
+                newRoomWorkElement.innerHTML = `
+                    <div class="room_work_remove " style="position: absolute; right:0; top:0; margin-top: 12px; margin-right: 5px;">
+                        <img id="remove_room_work" src="{% static 'images/remove.png' %}" width="24px" alt="">
+                    
+                </div>`;
+
+                var newSelectList = document.createElement("select");
+                newSelectList.id = `work_Select_${count}`;
+                newSelectList.multiple = true
+                newSelectList.className="form-control room_work_select"
+                var new_room_works_json = room_works_json.filter((el) => el.room_slug == e.target.value)
+                if (new_room_works_json.length){
+                    for (var i = 0; i < new_room_works_json.length; i++) {
+                        var option = document.createElement("option");
+                        option.value = new_room_works_json[i].slug;
+                        option.text = new_room_works_json[i].name;
+                        newSelectList.appendChild(option);
+                    }
+                    newRoomWorkElement.prepend(newSelectList)
+                    newElement.append(newRoomWorkElement)
+                    used_rooms.push(e.target.value)
+                }
+                newElement.id = e.target.value
+            }
+            count += 1;
+        }
+
+        var add_room_work_wrapper = document.querySelector(".add_room_work_wrapper")
+        add_room_work_wrapper.onclick = (e) =>{
+
+            if (e.target.id == "remove_room_work"){
+                var aditionaLField = e.target.closest(".room_work_block")
+                if ( aditionaLField){
+                    aditionaLField.remove()
+                }
+
+            }else{
+                var aditionaLField = e.target.closest(".block_aditional_work")
+                if (e.target.id == "remove"  &&  aditionaLField){
+                    var room_slug = Array.from(aditionaLField.childNodes)[0].name
+                    aditionaLField.remove()
+
+                    var index = used_rooms.indexOf(room_slug);
+                    if (index !== -1) {
+                        used_rooms.splice(index, 1); 
+                    }
+                }
+            }
+            
+        }
+    </script>
+{% endblock section %}

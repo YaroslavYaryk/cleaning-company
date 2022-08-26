@@ -82,19 +82,21 @@ class LogoutUser(LogoutView, SuccessMessageMixin):
 
 
 @login_required(login_url="login")
-def get_profile(request):
+def get_profile(request, user_id):
 
-    user = request.user
+    user = handle_user.get_user_by_id(user_id)
 
-    context = {"user": user}
+    context = {
+        "user": user,
+    }
 
     return render(request, "base/profile.html", context=context)
 
 
 @login_required(login_url="login")
-def get_profile_edit(request):
+def get_profile_edit(request, user_id):
 
-    user = request.user
+    user = handle_user.get_user_by_id(user_id)
     if request.method == "POST":
         form = ChangeForm(request.POST, request.FILES, instance=user)
 
@@ -102,7 +104,9 @@ def get_profile_edit(request):
             try:
                 print(request.POST, request.FILES)
                 form.save()
-                return HttpResponseRedirect(reverse("profile"))
+                return HttpResponseRedirect(
+                    reverse("profile", kwargs={"user_id": user_id})
+                )
             except Exception as er:
                 messages.error(request, er)
         else:

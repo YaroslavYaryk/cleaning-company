@@ -31,7 +31,8 @@
                             <ul class="sub-menu">
                                 <li class="sub-menu-item">
                                     <img src="{% static 'images/user.png' %}" width="20"  alt="">
-                                    <a style="; text-decoration: none;" href="{% url 'profile' %}">Profile</a>
+                                    <a style="text-decoration: none;"
+                                       href="{% url 'profile' request.user.id %}">Profile</a>
                                 </li>
                                 <li class="sub-menu-item">
                                     <img src="{% static 'images/padlock.png' %}" width="20"  alt="">

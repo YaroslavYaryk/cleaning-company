@@ -1,4 +1,4 @@
-{% extends './base.html' %}
+{% extends request.user.admin|yesno:"base/base_director.html,base/base_worker.html" %}
 {% load static %}
 {% block link2 %}
     <link rel="stylesheet" href="{% static 'css/base/profile.css' %}">
@@ -188,13 +188,15 @@
                             {% endif %}
                         </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <a class="btn btn-info "
-                                   target="__blank"
-                                   href="{% url 'edit_profile' %}">Edit</a>
+                        {% if user.id == request.user.id %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a class="btn btn-info "
+                                       target="__blank"
+                                       href="{% url 'edit_profile' request.user.id %}">Edit</a>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
