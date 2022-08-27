@@ -1,0 +1,68 @@
+{% extends '../base/base_director.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load director_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+{% endblock link %}
+{% block section %}
+    <div class="container mt-3" style="">
+        <div class="block-wrapper">
+            {% for shift in shift_works %}
+                <div class="card mb-2">
+                    <div class="card-header">Shift: {{ shift.worker_shift.shift }}</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ shift.worker_shift.user.full_name }}</h5>
+                        <div class="block" style="display: flex; justify-content:space-between">
+                            <div class="sp"></div>
+                            <div class="buttons">
+                                <a href="#"
+                                   id="room_component"
+                                   name="{{ shift.id|room_component_id }}"
+                                   class="btn btn-info">Components</a>
+                                <a href="{% url 'edit_shift' shift.worker_shift.id %}"
+                                   class="btn btn-primary">Edit</a>
+                                <a href="" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                        <div class="d-none"
+                             style="display: grid;
+                                    grid-template-columns: 1fr 2fr;"
+                             id="{{ shift.id|room_component_id }}">
+                            {% for elem in shift.worker_job.all %}
+                                <div class="block mb-3" style="">
+                                    <div class="block_inner"
+                                         style="display: flex; align-items:center; gap:15px">
+                                        <div class="block_icon">
+                                            {% if elem.done %}
+                                                <img src="{% static 'images/plus.png' %}" width="24px" alt="">
+                                            {% else %}
+                                                <img src="{% static 'images/minus.png' %}" width="24px" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="block_text">{{ elem.room_work.name }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        block_wrapper = document.querySelector(".block-wrapper")
+        if (block_wrapper){
+            block_wrapper.onclick = (e) =>{
+                if (e.target.id == "room_component"){
+                    var hidden_block = document.getElementById(e.target.name)
+                    if (hidden_block.className == "d-grid"){
+                        hidden_block.className = "d-none"
+                    }else{
+                        hidden_block.className = "d-grid"
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock section %}

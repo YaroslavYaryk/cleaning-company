@@ -8,10 +8,10 @@ class WorkerShift(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     SHIFT_NAMES = (
-        ("morning_shift", "morning shift"),
-        ("day_shift", "day shift"),
-        ("evening_shift", "evening shift"),
-        ("night_shift", "night shift"),
+        ("morning shift", "morning shift"),
+        ("day shift", "day shift"),
+        ("evening shift", "evening shift"),
+        ("night shift", "night shift"),
     )
 
     shift = models.CharField(max_length=100, choices=SHIFT_NAMES)

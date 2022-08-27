@@ -1,6 +1,7 @@
 {% extends '../base/base_director.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load director_tags %}
 {% block link %}
     <link rel="stylesheet" href="{% static 'css/director/create_room.css' %}">
 {% endblock link %}
@@ -39,6 +40,37 @@
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1 add_room_work_wrapper">
                                         <label style="margin-bottom: 0px;" class="label" for="password">Room</label>
+                                        {% for room, worker_jobs in works_for_category.items %}
+                                            <div class="block_aditional_work"
+                                                 style="position: relative;
+                                                        margin-bottom: 10px;">
+                                                <h4>{{ room }}</h4>
+                                                <select class="form-control" name="" id="" multiple>
+                                                    {% for work in room|room_components_by_name %}
+                                                        {% if work.name in worker_jobs %}
+                                                            <option selected="true" value="{{ work }}">
+{{ work }}
+                                                            </option>
+                                                        {% else %}
+                                                            <option value="{{ worker_jobs }}">
+{{ work }}
+                                                            </option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="block_remove "
+                                                     style="position: absolute;
+                                                            right:0;
+                                                            top:0;
+                                                            margin-top: 12px;
+                                                            margin-right: 5px;">
+                                                    <img id="remove"
+                                                         src="{% static 'images/remove.png' %}"
+                                                         width="24px"
+                                                         alt="">
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                         <div class="add_work-block mb-3"
                                              style="display: flex; justify-content:space-between; align-items:center">
                                             <div class="add_work-item">Add room</div>
@@ -68,8 +100,8 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         var add_work_for_room = document.querySelector(".add_work_for_room")
@@ -106,18 +138,13 @@
             add_work_block.before(newElement); //в середину
             var room_selector = document.querySelector(`#${selectList.id}`)
             room_selector.onchange = (e) =>{
-
                 const newRoomWorkElement = document.createElement("div");
                 newRoomWorkElement.className = 'room_work_block'
                 newRoomWorkElement.style.position = "relative"
                 newRoomWorkElement.style.marginBottom = "10px"
 
                 newRoomWorkElement.innerHTML = `
-                    <div class="room_work_remove " style="position: absolute; right:0; top:0; margin-top: 12px; margin-right: 5px;">
-                        <img id="remove_room_work" src="{% static 'images/remove.png' %}" width="24px" alt="">
-                    
-                </div>`;
-
+                    `;
                 var newSelectList = document.createElement("select");
                 newSelectList.id = `work_Select_${count}`;
                 newSelectList.name = `work_Select_${count}`

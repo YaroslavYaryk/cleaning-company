@@ -8,6 +8,7 @@ from .services import handle_work
 from .forms import RoomCreate, WorkerShiftCreate
 import re
 from accounts.services import handle_user
+from worker.services import handle_worker
 
 # Create your views here.
 
@@ -60,7 +61,6 @@ def edit_room(request, room_slug):
             template = r"room_component_[0-9][0-9]?[0-9]?[0-9]?[0-9]?[0-9]?"
             proper_keys = re.findall(template, keys)
             ids = [el.split("_")[-1] for el in proper_keys]
-            print(proper_keys, ids)
             for key, idd in zip(proper_keys, ids):
                 handle_work.edit_or_create_room_work(room, request.POST.get(key), idd)
             return HttpResponseRedirect(reverse("room_list"))
@@ -111,14 +111,16 @@ def create_shift(request):
         form = WorkerShiftCreate(workers, request.POST)
 
         if form.is_valid():
-            print(request.POST)
+            shift = form.save()
+            room_works = handle_work.get_room_work_slugs(request.POST)
+            work = handle_work.create_work(shift)
+            handle_work.add_room_works_to_shift(work, room_works)
 
             return HttpResponseRedirect(reverse("create_shift"))
 
     form = WorkerShiftCreate(workers)
     rooms, rooms_json = handle_work.get_all_rooms()
     room_works, room_works_json = handle_work.get_room_works()
-
     context = {
         "form": form,
         "rooms": rooms,
@@ -128,3 +130,51 @@ def create_shift(request):
     }
 
     return render(request, "director/create_shift.html", context)
+
+
+@login_required(login_url="login")
+def get_workers_shifts_work_list(request):
+
+    shift_works = handle_work.get_all_shift_works()
+
+    context = {
+        "shift_works": shift_works,
+    }
+
+    return render(request, "director/workers_shifts_work_list.html", context)
+
+
+@login_required(login_url="login")
+def edit_shift(request, shift_id):
+
+    workers = handle_user.get_all_workers(request.user)
+    shift = handle_worker.get_shift_by_id(shift_id)
+    worker_jobs_shift = handle_work.get_worker_jobs_shift(shift_id)
+    works_for_category = handle_work.get_works_for_category(worker_jobs_shift)
+
+    if request.method == "POST":
+        form = WorkerShiftCreate(workers, request.POST, instance=shift)
+
+        if form.is_valid():
+            shift = form.save()
+            room_works = handle_work.get_room_work_slugs(request.POST)
+            work = handle_work.create_work(shift)
+            handle_work.add_room_works_to_shift(work, room_works)
+
+            return HttpResponseRedirect(reverse("create_shift"))
+
+    form = WorkerShiftCreate(workers, instance=shift)
+    rooms, rooms_json = handle_work.get_all_rooms()
+    room_works, room_works_json = handle_work.get_room_works()
+    context = {
+        "form": form,
+        "rooms": rooms,
+        "shift": shift,
+        "room_works": room_works,
+        "rooms_json": rooms_json,
+        "room_works_json": room_works_json,
+        "worker_jobs_shift": worker_jobs_shift,
+        "works_for_category": works_for_category,
+    }
+
+    return render(request, "director/edit_shift.html", context)

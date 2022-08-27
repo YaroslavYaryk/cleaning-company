@@ -7,6 +7,8 @@ from .views import (
     delete_room,
     get_all_workers,
     create_shift,
+    get_workers_shifts_work_list,
+    edit_shift,
 )
 
 urlpatterns = [
@@ -21,4 +23,10 @@ urlpatterns = [
     path("delete_room/<room_slug>/", delete_room, name="delete_room"),
     path("workers/", get_all_workers, name="get_all_workers"),
     path("create_shift/", create_shift, name="create_shift"),
+    path("edit_shift/<shift_id>/", edit_shift, name="edit_shift"),
+    path(
+        "workers_shifts_work_list/",
+        get_workers_shifts_work_list,
+        name="get_workers_shifts_work_list",
+    ),
 ]
