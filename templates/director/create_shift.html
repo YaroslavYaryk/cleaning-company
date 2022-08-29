@@ -68,8 +68,8 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         var add_work_for_room = document.querySelector(".add_work_for_room")
@@ -77,7 +77,7 @@
         var rooms_json = JSON.parse("{{rooms_json|escapejs}}")
         var room_works_json = JSON.parse("{{room_works_json|escapejs}}")
         var used_rooms = [];
-        add_work_for_room.onclick = () =>{
+        add_work_for_room.onclick = (e) =>{
             var add_work_block = document.querySelector(".add_work-block")
             const newElement = document.createElement("div");
             newElement.className = 'block_aditional_work'
@@ -89,7 +89,6 @@
                     <img id="remove" src="{% static 'images/remove.png' %}" width="24px" alt="">
                 
             </div>`;
-
 
             var selectList = document.createElement("select");
             selectList.id = `mySelect_${count}`;
@@ -106,7 +105,7 @@
             add_work_block.before(newElement); //в середину
             var room_selector = document.querySelector(`#${selectList.id}`)
             room_selector.onchange = (e) =>{
-
+                
                 const newRoomWorkElement = document.createElement("div");
                 newRoomWorkElement.className = 'room_work_block'
                 newRoomWorkElement.style.position = "relative"
@@ -124,6 +123,7 @@
                 newSelectList.multiple = true
                 newSelectList.className="form-control room_work_select"
                 var new_room_works_json = room_works_json.filter((el) => el.room_slug == e.target.value)
+                selectList.name = e.target.value
                 if (new_room_works_json.length){
                     for (var i = 0; i < new_room_works_json.length; i++) {
                         var option = document.createElement("option");
@@ -154,11 +154,12 @@
                 if (e.target.id == "remove"  &&  aditionaLField){
                     var room_slug = Array.from(aditionaLField.childNodes)[0].name
                     aditionaLField.remove()
-
+                    console.log(Array.from(aditionaLField.childNodes)[0])
                     var index = used_rooms.indexOf(room_slug);
                     if (index !== -1) {
                         used_rooms.splice(index, 1); 
                     }
+                    console.log(used_rooms)
                 }
             }
             

@@ -16,7 +16,7 @@
                         <div class="login-wrap p-4 p-md-5" style=" width:100%">
                             <div class="d-flex">
                                 <div class="w-100">
-                                    <h3 class="mb-4">Create Shift</h3>
+                                    <h3 class="mb-4">Update Shift</h3>
                                 </div>
                             </div>
                             {% if form.errors %}
@@ -45,11 +45,16 @@
                                                  style="position: relative;
                                                         margin-bottom: 10px;">
                                                 <h4>{{ room }}</h4>
-                                                <select class="form-control" name="" id="" multiple>
+{{ room.name }}
+                                                <select class="form-control"
+                                                        roomName="{{ room }}"
+                                                        name="{{ spec_name|random_number }}"
+                                                        id="main_select"
+                                                        multiple>
                                                     {% for work in room|room_components_by_name %}
                                                         {% if work.name in worker_jobs %}
-                                                            <option selected="true" value="{{ work }}">
-{{ work }}
+                                                            <option selected="true" value="{{ work.name }}">
+{{ work.name }}
                                                             </option>
                                                         {% else %}
                                                             <option value="{{ worker_jobs }}">
@@ -64,10 +69,12 @@
                                                             top:0;
                                                             margin-top: 12px;
                                                             margin-right: 5px;">
-                                                    <img id="remove"
-                                                         src="{% static 'images/remove.png' %}"
-                                                         width="24px"
-                                                         alt="">
+                                                    <a href="{% url 'delete_worker_room_work' shift.id room|id_by_name %}">
+                                                        <img id="remove"
+                                                             src="{% static 'images/remove.png' %}"
+                                                             width="24px"
+                                                             alt="">
+                                                    </a>
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -100,15 +107,16 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         var add_work_for_room = document.querySelector(".add_work_for_room")
         var count = 0
         var rooms_json = JSON.parse("{{rooms_json|escapejs}}")
         var room_works_json = JSON.parse("{{room_works_json|escapejs}}")
-        var used_rooms = [];
+        var used_rooms = JSON.parse("{{used_rooms|escapejs}}")
+        console.log(used_rooms)
         add_work_for_room.onclick = () =>{
             var add_work_block = document.querySelector(".add_work-block")
             const newElement = document.createElement("div");
@@ -151,9 +159,12 @@
                 newSelectList.multiple = true
                 newSelectList.className="form-control room_work_select"
                 var new_room_works_json = room_works_json.filter((el) => el.room_slug == e.target.value)
+                selectList.setAttribute("roomName",e.target.value);
+
                 if (new_room_works_json.length){
                     for (var i = 0; i < new_room_works_json.length; i++) {
                         var option = document.createElement("option");
+                        console.log(new_room_works_json[i].slug)
                         option.value = new_room_works_json[i].slug;
                         option.text = new_room_works_json[i].name;
                         newSelectList.appendChild(option);
@@ -161,6 +172,8 @@
                     newRoomWorkElement.prepend(newSelectList)
                     newElement.append(newRoomWorkElement)
                     used_rooms.push(e.target.value)
+
+                    
                 }
                 {% comment %} newElement.id = e.target.value {% endcomment %}
             }
@@ -170,24 +183,35 @@
         var add_room_work_wrapper = document.querySelector(".add_room_work_wrapper")
         add_room_work_wrapper.onclick = (e) =>{
 
-            if (e.target.id == "remove_room_work"){
-                var aditionaLField = e.target.closest(".room_work_block")
-                if ( aditionaLField){
-                    aditionaLField.remove()
-                }
 
-            }else{
                 var aditionaLField = e.target.closest(".block_aditional_work")
                 if (e.target.id == "remove"  &&  aditionaLField){
-                    var room_slug = Array.from(aditionaLField.childNodes)[0].name
+                    
+                    try {
+                        console.log(aditionaLField)
+                        var room = aditionaLField.querySelector("#main_select")
+
+                        if (room){
+                            room_slug = room.getAttribute("roomName")
+                        }else{
+                            room_slug = aditionaLField.querySelector(".room_select").getAttribute("roomName")
+                        }
+                        console.log(room_slug, "here")
+                        console.log(used_rooms)
+
+                        var index = used_rooms.indexOf(room_slug);
+                        console.log(used_rooms)
+                        if (index !== -1) {
+                            used_rooms.splice(index, 1); 
+                        }
+                        console.log(used_rooms)
+
+                    }catch(e){
+                        console.log(e)
+                    }
                     aditionaLField.remove()
 
-                    var index = used_rooms.indexOf(room_slug);
-                    if (index !== -1) {
-                        used_rooms.splice(index, 1); 
-                    }
                 }
-            }
             
         }
     </script>

@@ -151,17 +151,15 @@ def edit_shift(request, shift_id):
     shift = handle_worker.get_shift_by_id(shift_id)
     worker_jobs_shift = handle_work.get_worker_jobs_shift(shift_id)
     works_for_category = handle_work.get_works_for_category(worker_jobs_shift)
+    used_rooms = handle_work.get_free_rooms_for_work(worker_jobs_shift)
 
     if request.method == "POST":
         form = WorkerShiftCreate(workers, request.POST, instance=shift)
 
         if form.is_valid():
-            shift = form.save()
-            room_works = handle_work.get_room_work_slugs(request.POST)
-            work = handle_work.create_work(shift)
-            handle_work.add_room_works_to_shift(work, room_works)
+            handle_work.update_existed_works(shift, request.POST)
 
-            return HttpResponseRedirect(reverse("create_shift"))
+            return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
 
     form = WorkerShiftCreate(workers, instance=shift)
     rooms, rooms_json = handle_work.get_all_rooms()
@@ -175,6 +173,20 @@ def edit_shift(request, shift_id):
         "room_works_json": room_works_json,
         "worker_jobs_shift": worker_jobs_shift,
         "works_for_category": works_for_category,
+        "used_rooms": used_rooms,
+        "spec_name": "work_Select_",
     }
+    print(room_works_json)
 
     return render(request, "director/edit_shift.html", context)
+
+
+@login_required(login_url="login")
+def delete_worker_room_work(request, shift_id, room_id):
+
+    try:
+        handle_work.delete_worker_room_work(shift_id, room_id)
+    except Exception as ex:
+        print(ex)
+
+    return HttpResponseRedirect(reverse("edit_shift", kwargs={"shift_id": shift_id}))

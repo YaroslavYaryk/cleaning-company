@@ -104,3 +104,32 @@ def get_works_for_category(worker_jobs_shift):
         else:
             work_dict[room] = [work.room_work.name]
     return work_dict
+
+
+def get_free_rooms_for_work(worker_jobs_shift):
+    taken_rooms = {
+        room.room_work.room.slug for room in worker_jobs_shift.worker_job.all()
+    }
+    return json.dumps(list(taken_rooms))
+
+
+def delete_worker_room_work(shift_id, room_id):
+
+    shift_work = Work.objects.get(worker_shift__id=shift_id)
+    shift_work.worker_job.filter(room_work__room__id=room_id).delete()
+
+
+def delete_old_works(shift, taken_rooms):
+    for room in taken_rooms:
+        shift.worker_job.filter(room_work__room__name=room).delete()
+
+
+def update_existed_works(shift, data):
+    shift_work = Work.objects.get(worker_shift=shift)
+    taken_rooms = list(
+        {room.room_work.room.slug for room in shift_work.worker_job.all()}
+    )
+    delete_old_works(shift_work, taken_rooms)
+    room_works = [slugify(elem) for elem in get_room_work_slugs(data)]
+    # print(room_works)
+    add_room_works_to_shift(shift_work, room_works)
