@@ -12,3 +12,19 @@
     color: black;
     text-decoration: none;
 }
+
+#suggestions {
+    margin: 10px 0 10px 0;
+}
+
+.search_list_item {
+    margin-left: -40px;
+    background: #D6E5FA;
+    padding: 5px 0 5px 10px;
+    margin-bottom: 30px;
+    border: 1px solid #424642;
+}
+
+.search_list_item:hover {
+    cursor: pointer;
+}

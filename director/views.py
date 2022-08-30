@@ -116,7 +116,7 @@ def create_shift(request):
             work = handle_work.create_work(shift)
             handle_work.add_room_works_to_shift(work, room_works)
 
-            return HttpResponseRedirect(reverse("create_shift"))
+            return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
 
     form = WorkerShiftCreate(workers)
     rooms, rooms_json = handle_work.get_all_rooms()
@@ -139,6 +139,9 @@ def get_workers_shifts_work_list(request):
 
     context = {
         "shift_works": shift_works,
+        "aval_workers": handle_work.jsonify_users(
+            handle_user.get_all_workers(request.user)
+        ),
     }
 
     return render(request, "director/workers_shifts_work_list.html", context)
@@ -190,3 +193,29 @@ def delete_worker_room_work(request, shift_id, room_id):
         print(ex)
 
     return HttpResponseRedirect(reverse("edit_shift", kwargs={"shift_id": shift_id}))
+
+
+@login_required(login_url="login")
+def delete_worker_shift(request, shift_id):
+
+    try:
+        handle_work.delete_whole_worker_shift(shift_id)
+    except Exception as err:
+        print(err)
+
+    return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
+
+
+@login_required(login_url="login")
+def search_worker_shift(request, worker_email):
+
+    shift_works = handle_work.get_searched_shifts(worker_email)
+
+    context = {
+        "shift_works": shift_works,
+        "aval_workers": handle_work.jsonify_users(
+            handle_user.get_all_workers(request.user)
+        ),
+    }
+
+    return render(request, "director/workers_shifts_work_list.html", context)

@@ -1,0 +1,54 @@
+{% extends '../base/base_worker.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load director_tags %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+{% endblock link %}
+{% block section %}
+    <div class="container mt-3" style="">
+        <div class="block-wrapper">
+            {% for shift in shifts %}
+                <div class="card mb-2">
+                    <div class="card-header" style="font-weight: bold;">{{ shift.worker_shift.shift }}</div>
+                    <div class="card-body">
+                        <div class="block">
+                            <div class="table-responsive scrollbar">
+                                <table class="table table-bordered overflow-hidden">
+                                    <colgroup>
+                                        <col class="bg-soft-primary" />
+                                        <col />
+                                        <col />
+                                    </colgroup>
+                                    <thead>
+                                        <tr class="btn-reveal-trigger">
+                                            <th scope="col">Name</th>
+                                            <th class="text-end" scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for work in shift.worker_job.all %}
+                                            <tr class="btn-reveal-trigger">
+                                                <td style="width:100%">{{ work.room_work.name }}</td>
+                                                <td style="width:100%" class="text-end">
+                                                    <div class="block_button_done">
+                                                        {% if work.done %}
+                                                            <a class="btn btn-success disabled">Done</a>
+                                                        {% else %}
+                                                            <a class="btn btn-success " href="{% url 'done_shift_work' work.id %}">Done</a>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript"></script>
+{% endblock section %}

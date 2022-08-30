@@ -26,6 +26,7 @@ urlpatterns = [
     path("", index, name="home"),
     path("accounts/", include("accounts.urls")),
     path("director/", include("director.urls")),
+    path("worker/", include("worker.urls")),
     # serve
     #
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

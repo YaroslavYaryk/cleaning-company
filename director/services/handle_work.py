@@ -133,3 +133,21 @@ def update_existed_works(shift, data):
     room_works = [slugify(elem) for elem in get_room_work_slugs(data)]
     # print(room_works)
     add_room_works_to_shift(shift_work, room_works)
+
+
+def delete_all_shift_works(shift):
+    shift.worker_job.all().delete()
+
+
+def delete_whole_worker_shift(shift_id):
+    shift_work = Work.objects.get(worker_shift__id=shift_id)
+    delete_all_shift_works(shift_work)
+    shift_work.worker_shift.delete()
+
+
+def get_searched_shifts(worker_email):
+    return Work.objects.filter(worker_shift__user__email=worker_email)
+
+
+def jsonify_users(users):
+    return json.dumps([us.email for us in users])

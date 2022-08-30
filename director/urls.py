@@ -10,6 +10,8 @@ from .views import (
     get_workers_shifts_work_list,
     edit_shift,
     delete_worker_room_work,
+    delete_worker_shift,
+    search_worker_shift,
 )
 
 urlpatterns = [
@@ -25,6 +27,7 @@ urlpatterns = [
     path("workers/", get_all_workers, name="get_all_workers"),
     path("create_shift/", create_shift, name="create_shift"),
     path("edit_shift/<shift_id>/", edit_shift, name="edit_shift"),
+    path("delete_shift/<shift_id>/", delete_worker_shift, name="delete_worker_shift"),
     path(
         "delete_shift_room_work/<shift_id>/<room_id>/",
         delete_worker_room_work,
@@ -34,5 +37,10 @@ urlpatterns = [
         "workers_shifts_work_list/",
         get_workers_shifts_work_list,
         name="get_workers_shifts_work_list",
+    ),
+    path(
+        "workers_shifts_work_list/search/<worker_email>/",
+        search_worker_shift,
+        name="search_worker_shift",
     ),
 ]
