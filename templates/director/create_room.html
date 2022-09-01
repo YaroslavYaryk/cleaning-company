@@ -30,6 +30,7 @@
                                     <div class="form-group col-md-12 mb-1">
                                         <label style="margin-bottom: 0px;" class="label" for="password">Name</label>
                                         <div class="">{{ form.name|add_class:"form-control" }}</div>
+                                        <div class="form-error">{{ form.name.errors }}</div>
                                     </div>
                                 </div>
                                 <div class="form-row" style="">
@@ -64,8 +65,8 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         var add_work_for_room = document.querySelector(".add_work_for_room")

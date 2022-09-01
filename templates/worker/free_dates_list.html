@@ -1,0 +1,49 @@
+{% extends '../base/base_worker.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/director/create_room.css' %}">
+    <link rel="stylesheet" href="{% static 'css/falcon/flatpickr.min.css' %}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+{% endblock link %}
+{% block section %}
+    <div class="container">
+        <div class="table-responsive scrollbar">
+            {% if free_dates %}
+                <table class="table table-hover table-striped overflow-hidden">
+                    <thead>
+                        <tr >
+                            <th scope="col">Date</th>
+                            <th scope="col">Setup worker</th>
+                            <th scope="col">Approved</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for free_day in free_dates %}
+                            <tr style="text-align: left;">
+                                <td class="text-nowrap">
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">{{ free_day.start_date  }} - {{ free_day.end_date }}</div>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap">ricky@example.com</td>
+                                <td class="text-nowrap">(201) 200-1851</td>
+                                <td >
+                                    <span style="padding:5px" class="badge badge-success">Completed
+                                        <h6 style="margin-left: 10px; display: inline;">
+                                            <i class="bi bi-check bi--lg"></i>
+                                        </h6>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You don't have any free date</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock section %}

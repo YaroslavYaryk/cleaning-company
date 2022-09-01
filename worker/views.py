@@ -1,7 +1,7 @@
 from multiprocessing import context
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .forms import ChangeForm
+from .forms import ChangeForm, FreeDaysForm
 from django.contrib import messages
 from worker.services import handle_worker
 from django.http.response import HttpResponseRedirect
@@ -37,3 +37,35 @@ def done_shift_work(request, worker_job_id):
         print(ex)
 
     return HttpResponseRedirect(reverse("get_shift_work_list"))
+
+
+@login_required(login_url="login")
+def add_free_days(request):
+
+    free_setup_users = handle_worker.get_free_setup_users(request.user)
+    form = FreeDaysForm(free_setup_users)
+    if request.method == "POST":
+        form = FreeDaysForm(free_setup_users, request.POST)
+        if form.is_valid():
+            free_dates = form.save(commit=False)
+            free_dates.user = request.user
+            handle_worker.add_dates_to_free_dates(
+                free_dates, request.POST["datepicker"]
+            )
+            # dates = request.POST["datepicker"].split("to")
+            # first, second = dates[0].strip(), dates[1].strip()
+            return HttpResponseRedirect(reverse("get_free_days_list"))
+
+    context = {"form": form}
+
+    return render(request, "worker/add_free_days.html", context)
+
+
+@login_required(login_url="login")
+def get_free_days_list(request):
+
+    free_dates = handle_worker.get_all_free_dates(request.user)
+
+    context = {"free_dates": free_dates}
+
+    return render(request, "worker/free_dates_list.html", context)

@@ -10,6 +10,17 @@ class RoomCreate(forms.ModelForm):
 
 
 class WorkerShiftCreate(forms.ModelForm):
+
+    date = forms.DateTimeField(
+        input_formats=["%d/%m/%Y"],
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": "form-control datetimepicker",
+                "data-target": "#datetimepicker1",
+            }
+        ),
+    )
+
     class Meta:
         model = WorkerShift
         fields = "__all__"

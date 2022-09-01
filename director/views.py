@@ -1,4 +1,5 @@
 from multiprocessing import context
+from types import NoneType
 from django.shortcuts import render
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse, reverse_lazy
@@ -106,6 +107,8 @@ def get_all_workers(request):
 def create_shift(request):
 
     workers = handle_user.get_all_workers(request.user)
+    form_errors = []
+    form = WorkerShiftCreate(workers)
 
     if request.method == "POST":
         form = WorkerShiftCreate(workers, request.POST)
@@ -118,7 +121,6 @@ def create_shift(request):
 
             return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
 
-    form = WorkerShiftCreate(workers)
     rooms, rooms_json = handle_work.get_all_rooms()
     room_works, room_works_json = handle_work.get_room_works()
     context = {
@@ -127,8 +129,8 @@ def create_shift(request):
         "room_works": room_works,
         "rooms_json": rooms_json,
         "room_works_json": room_works_json,
+        "form_errors": form_errors,
     }
-
     return render(request, "director/create_shift.html", context)
 
 

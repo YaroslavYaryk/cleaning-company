@@ -1,17 +1,20 @@
 {% extends './base.html' %}
 {% load static %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/worker/home.css' %}">
+{% endblock link %}
 {% block header_block %}
     <li class="sub-menu-parent" tab-index="0">
         <a class="title_link" href="{% url 'get_shift_work_list' %}">Work</a>
     </li>
     <li class="sub-menu-parent" tab-index="0">
-        <a class="title_link" href="#">Noth1</a>
+        <a class="title_link" href="#">Day OFF</a>
         <ul class="sub-menu">
             <li>
-                <a href="#">Sub Item 1</a>
+                <a class="title_link" href="{% url 'add_free_days' %}">Add free dates</a>
             </li>
             <li>
-                <a href="#">Sub Item 2</a>
+                <a class="title_link" href="{% url 'get_free_days_list' %}">Free dates</a>
             </li>
         </ul>
     </li>

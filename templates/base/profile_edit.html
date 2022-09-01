@@ -3,6 +3,7 @@
 {% load widget_tweaks %}
 {% block link2 %}
   <link rel="stylesheet" href="{% static 'css/base/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/falcon/flatpickr.min.css' %}">
   <title>Edit profile</title>
   <link rel="icon" href="{% static 'images/profile.png' %}">
 {% endblock link2 %}
@@ -214,7 +215,7 @@ Birthdate
                 </div>
                 <div class="col-sm-9">
                   <div class="col-sm-12 text-secondary">
-{{ form.birthdate|add_class:"form-control" }}
+{{ form.birthdate|add_class:"form-control datetimepicker" }}
                   </div>
                 </div>
                 <div class="form-error">
@@ -297,4 +298,5 @@ Account number
   });
   </script>
 {% endblock javascript %}
+<script src="{% static 'js/flatpickr.js' %}"></script>
 {% endblock section %}

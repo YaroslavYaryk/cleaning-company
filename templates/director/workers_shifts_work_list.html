@@ -22,7 +22,11 @@
             {% if shift_works %}
                 {% for shift in shift_works %}
                     <div class="card mb-2">
-                        <div class="card-header">Shift: {{ shift.worker_shift.shift }}</div>
+                        <div class="block_flex card-header"
+                             style="display: flex; justify-content:space-between">
+                            <div class="">Shift: {{ shift.worker_shift.shift }}</div>
+                            <div class="">{{ shift.worker_shift.date }}</div>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ shift.worker_shift.user.full_name }}</h5>
                             <div class="block" style="display: flex; justify-content:space-between">

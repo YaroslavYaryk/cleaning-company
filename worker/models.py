@@ -16,6 +16,11 @@ class WorkerShift(models.Model):
 
     shift = models.CharField(max_length=100, choices=SHIFT_NAMES)
 
+    date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("user", "shift", "date")
+
     def __str__(self):
         return f"{self.user} - {self.shift}"
 
@@ -23,3 +28,24 @@ class WorkerShift(models.Model):
         if self.user.admin:
             raise ValidationError("Admin cannot have shift")
         super(WorkerShift, self).clean(*args, **kwargs)
+
+
+class FreeDates(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    setup_worker = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="setup_worker",
+        blank=True,
+        null=True,
+    )
+
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.start_date} - {self.end_date} - (setup)-{self.setup_worker} - {self.approved}"
