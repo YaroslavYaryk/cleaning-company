@@ -1,4 +1,4 @@
-{% extends '../base/base_worker.html' %}
+{% extends '../base/base_director.html' %}
 {% load static %}
 {% load widget_tweaks %}
 {% block link %}
@@ -15,8 +15,8 @@
                     <thead>
                         <tr >
                             <th scope="col">Date</th>
+                            <th scope="col">User</th>
                             <th scope="col">Setup worker</th>
-                            <th scope="col">Approved</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -32,6 +32,10 @@
                                         {% endif %}
                                     </div>
                                 </td>
+                                <td class="text-nowrap">
+                                    <a style="font-weight: bold;"
+                                       href="{% url 'profile'  free_day.user.id %}">{{ free_day.user }}</a>
+                                </td>
                                 {% if free_day.setup_worker %}
                                     <td class="text-nowrap">
                                         <a style="font-weight: bold;"
@@ -41,16 +45,19 @@
                                     <td class="text-nowrap">No one</td>
                                 {% endif %}
                                 <td >
-                                    {% if free_day.approved == "True" %}
+                                    {% if free_day.approved == "null" %}
+                                        <div class="block" style="display: flexl">
+                                            <a class="btn btn-success"
+                                               style="padding:5px 10px 5px 10px"
+                                               href="{% url 'approve_worker_free_date' free_day.id %}">Approve</a>
+                                            <a class="btn btn-danger"
+                                               style="padding:5px 10px 5px 10px"
+                                               href="{% url 'refuse_worker_free_date' free_day.id %}">Refuse</a>
+                                        </div>
+                                    {% elif free_day.approved == "True" %}
                                         <span style="padding:5px" class="badge badge-success">Approved
                                             <h6 style="margin-left: 10px; display: inline;">
-                                                <i class="bi bi-check bi--lg"></i>
-                                            </h6>
-                                        </span>
-                                    {% elif free_day.approved == "null" %}
-                                        <span style="padding:5px" class="badge badge-secondary">Waiting
-                                            <h6 style="margin-left: 10px; display: inline;">
-                                                <i class="bi bi-hourglass"></i>
+                                                <i class="bi bi-check"></i>
                                             </h6>
                                         </span>
                                     {% else %}
@@ -61,17 +68,12 @@
                                         </span>
                                     {% endif %}
                                 </td>
-                                <td >
-                                    <a class="btn btn-outline-info me-1 mb-1 "
-                                       style="padding:5px 10px 5px 10px"
-                                       href="{% url 'edit_free_days' free_day.id %}">Edit</a>
-                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <p>You don't have any free date</p>
+                <p>No worker has a free date</p>
             {% endif %}
         </div>
     </div>

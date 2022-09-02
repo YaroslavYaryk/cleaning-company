@@ -32,6 +32,7 @@
                                     <input class="form-control datetimepicker"
                                            id="timepicker2"
                                            name="datepicker"
+                                           value="{{ dates_list }}"
                                            type="text"
                                            placeholder="d/m/y to d/m/y"
                                            data-options='{"mode":"range","dateFormat":"m-d-y","disableMobile":true}'/>
@@ -56,12 +57,11 @@
         </div>
     </section>
     {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/popper.js' %}"></script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/popper.js' %}"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         function isBigger(d1, d2) {
-            console.log(d1 , d2)
             return d1 >= d2
           }
 

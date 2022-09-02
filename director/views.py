@@ -221,3 +221,35 @@ def search_worker_shift(request, worker_email):
     }
 
     return render(request, "director/workers_shifts_work_list.html", context)
+
+
+@login_required(login_url="login")
+def get_workers_free_dates(request):
+
+    all_free_dates = handle_worker.get_workers_free_dates()
+
+    context = {"free_dates": all_free_dates}
+
+    return render(request, "director/workers_free_dates_list.html", context)
+
+
+@login_required(login_url="login")
+def approve_worker_free_date(request, free_date_id):
+
+    try:
+        handle_worker.approve_free_date(free_date_id)
+    except Exception as ex:
+        print(ex)
+
+    return HttpResponseRedirect(reverse("get_workers_free_dates"))
+
+
+@login_required(login_url="login")
+def refuse_worker_free_date(request, free_date_id):
+
+    try:
+        handle_worker.refuse_free_date(free_date_id)
+    except Exception as ex:
+        print(ex)
+
+    return HttpResponseRedirect(reverse("get_workers_free_dates"))

@@ -10,44 +10,38 @@
 {% block section %}
     <div class="container">
         <div class="table-responsive scrollbar">
-            {% if free_dates %}
+            {% if setup_days %}
                 <table class="table table-hover table-striped overflow-hidden">
                     <thead>
                         <tr >
                             <th scope="col">Date</th>
-                            <th scope="col">Setup worker</th>
+                            <th scope="col">Worker</th>
                             <th scope="col">Approved</th>
-                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for free_day in free_dates %}
+                        {% for day in setup_days %}
                             <tr style="text-align: left;">
                                 <td class="text-nowrap">
                                     <div class="d-flex align-items-center">
-                                        {% if free_day.start_date == free_day.end_date %}
-                                            <div class="ms-2">{{ free_day.start_date|date:"d M, Y"  }}</div>
+                                        {% if day.start_date == day.end_date %}
+                                            <div class="ms-2">{{ day.start_date|date:"d M, Y"  }}</div>
                                         {% else %}
-                                            <div class="ms-2">{{ free_day.start_date|date:"d M, Y"  }} - {{ free_day.end_date|date:"d M, Y"  }}</div>
+                                            <div class="ms-2">{{ day.start_date|date:"d M, Y"  }} - {{ day.end_date|date:"d M, Y"  }}</div>
                                         {% endif %}
                                     </div>
                                 </td>
-                                {% if free_day.setup_worker %}
-                                    <td class="text-nowrap">
-                                        <a style="font-weight: bold;"
-                                           href="{% url 'profile'  free_day.setup_worker.id %}">{{ free_day.setup_worker }}</a>
-                                    </td>
-                                {% else %}
-                                    <td class="text-nowrap">No one</td>
-                                {% endif %}
+                                <td class="text-nowrap">
+                                    <a style="font-weight: bold;" href="{% url 'profile'  day.user.id %}">{{ day.user }}</a>
+                                </td>
                                 <td >
-                                    {% if free_day.approved == "True" %}
+                                    {% if day.approved == "True" %}
                                         <span style="padding:5px" class="badge badge-success">Approved
                                             <h6 style="margin-left: 10px; display: inline;">
                                                 <i class="bi bi-check bi--lg"></i>
                                             </h6>
                                         </span>
-                                    {% elif free_day.approved == "null" %}
+                                    {% elif day.approved == "null" %}
                                         <span style="padding:5px" class="badge badge-secondary">Waiting
                                             <h6 style="margin-left: 10px; display: inline;">
                                                 <i class="bi bi-hourglass"></i>
@@ -61,17 +55,12 @@
                                         </span>
                                     {% endif %}
                                 </td>
-                                <td >
-                                    <a class="btn btn-outline-info me-1 mb-1 "
-                                       style="padding:5px 10px 5px 10px"
-                                       href="{% url 'edit_free_days' free_day.id %}">Edit</a>
-                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <p>You don't have any free date</p>
+                <p>You don't have any setup dates</p>
             {% endif %}
         </div>
     </div>

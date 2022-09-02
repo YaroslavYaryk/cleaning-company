@@ -12,6 +12,9 @@ from .views import (
     delete_worker_room_work,
     delete_worker_shift,
     search_worker_shift,
+    get_workers_free_dates,
+    approve_worker_free_date,
+    refuse_worker_free_date,
 )
 
 urlpatterns = [
@@ -42,5 +45,16 @@ urlpatterns = [
         "workers_shifts_work_list/search/<worker_email>/",
         search_worker_shift,
         name="search_worker_shift",
+    ),
+    path("workers_free_date/", get_workers_free_dates, name="get_workers_free_dates"),
+    path(
+        "approve_free_date/<free_date_id>/",
+        approve_worker_free_date,
+        name="approve_worker_free_date",
+    ),
+    path(
+        "refuse_free_date/<free_date_id>/",
+        refuse_worker_free_date,
+        name="refuse_worker_free_date",
     ),
 ]

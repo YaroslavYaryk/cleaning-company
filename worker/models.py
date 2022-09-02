@@ -45,7 +45,7 @@ class FreeDates(models.Model):
         null=True,
     )
 
-    approved = models.BooleanField(default=False)
+    approved = models.CharField(max_length=100, default="null")
 
     def __str__(self):
         return f"{self.user.email} - {self.start_date} - {self.end_date} - (setup)-{self.setup_worker} - {self.approved}"
