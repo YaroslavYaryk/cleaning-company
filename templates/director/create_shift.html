@@ -30,7 +30,7 @@
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1">
                                         <label style="margin-bottom: 0px;" class="label" for="password">User</label>
-                                        <div class="">{{ form.user|add_class:"form-control" }}</div>
+                                        <div class="">{{ form.user|add_class:"form-control user-value" }}</div>
                                         <div class="form-error">{{ form.user.errors }}</div>
                                     </div>
                                     <div class="form-group col-md-12 mb-1">
@@ -43,6 +43,7 @@
                                         <div class="">{{ form.date|add_class:"form-control datetimepicker" }}</div>
                                         <div class="form-error">{{ form.date.errors }}</div>
                                     </div>
+                                    <div class="block_error" style=""></div>
                                 </div>
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1 add_room_work_wrapper">
@@ -66,7 +67,7 @@
                                 </div>
                                 <div class="form-group">
                                     <button type="submit"
-                                            class="form-control btn btn-primary rounded submit px-3">Create</button>
+                                            class="form-control btn btn-primary rounded submit px-3 button_create">Create</button>
                                 </div>
                             </form>
                         </div>
@@ -80,6 +81,140 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
+        function isBigger(d1, d2) {
+            console.log(d1 , d2)
+            return d1 >= d2
+          }
+
+        function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = cookies[i].trim();
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
+
+
+        var userValue = document.querySelector(".user-value")
+
+        if(!userValue.value){
+            document.querySelector(".datetimepicker").disabled = true
+            document.querySelector(".button_create").disabled = true
+            console.log(document.querySelector(".datetimepicker").disabled)
+        }
+
+        var values;
+        userValue.onchange = (event) =>{
+                const newUser = event.target.value
+                user = event.target.value
+                if (user){
+                    console.log(document.querySelector(".datetimepicker").disabled)
+                    document.querySelector(".datetimepicker").disabled = false
+                    console.log(document.querySelector(".datetimepicker").disabled)
+
+                    
+                }
+                if (values && newUser){
+
+                    const url=`http://127.0.0.1:8000/worker/api/worker/${newUser}/taken_free_dates/`
+                    fetch(url, {
+                        method:"POST", 
+                        body: JSON.stringify({
+                            date: values
+                        }), 
+                        headers:{
+                            'X-CSRFToken':csrftoken,
+                            'Content-type':'application/json',
+                        }
+                    })
+                    .then((resp) => resp.json())
+                    .then(function(data){
+                        var parsedData = JSON.parse(data).data
+                        var type = JSON.parse(data).type
+                        console.log(JSON.parse(data).type)
+                        if (!parsedData){
+                            document.querySelector(".button_create").disabled = false
+                            return
+                        }else{
+                            var first_date = new Date(parsedData[0])
+                            var second_date = new Date(parsedData[1])
+                            
+                            var block_error = document.querySelector(".block_error")
+                            block_error.style.display = "block"
+                            if (type == "setup_dates"){
+                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+                            }else{
+                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+
+                            }
+                            document.querySelector(".button_create").disabled = true    
+                        }
+                    })
+                }
+                var datetimepicker = document.querySelector(".datetimepicker")
+                datetimepicker.onchange = (e) =>{
+                    var value = e.target.value.split(" to ")
+                    
+                        var firstDate = value[0].trim()
+                        var block_error = document.querySelector(".block_error")
+                        var button_create = document.querySelector(".button_create")
+                        if (! isBigger(new Date(firstDate), new Date())){
+                            block_error.style.display = "block"
+                            block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">Date is in the past</p>`
+                            document.querySelector(".button_create").disabled = true
+                            document.querySelector(".datetimepicker").disabled = true
+                            button_create.onclick = (e)=>{e.preventDefault()}
+                        }else{
+                            var valuesData = []
+                            valuesData.push(value[0]) 
+                            valuesData.push(value[0])
+                            values = valuesData
+                            block_error.style.display = "none"
+                            document.querySelector(".button_create").disabled = false
+                            button_create.onclick = (e)=>{}
+                            document.querySelector(".datetimepicker").disabled = true
+                            if(values && user){
+                                const url=`http://127.0.0.1:8000/worker/api/worker/${user}/taken_free_dates/`
+                                fetch(url, {
+                                    method:"POST", 
+                                    body: JSON.stringify({
+                                        date: values
+                                    }), 
+                                    headers:{
+                                        'X-CSRFToken':csrftoken,
+                                        'Content-type':'application/json',
+                                    }
+                                })
+                                .then((resp) => resp.json())
+                                .then(function(data){
+                                    var parsedData = JSON.parse(data).data
+                                    
+                                    if (!parsedData){
+                                        console.log("here")
+                                        document.querySelector(".button_create").disabled = false
+                                        return
+        
+                                    }else{
+                                        var block_error = document.querySelector(".block_error")
+                                        var first_date = new Date(parsedData[0])
+                                        var second_date = new Date(parsedData[1])
+                                        block_error.style.display = "block"
+                                        block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`                            }
+                                        document.querySelector(".button_create").disabled = true
+                                })
+                        }}
+                                            }
+            }
+
         var add_work_for_room = document.querySelector(".add_work_for_room")
         var count = 0
         var rooms_json = JSON.parse("{{rooms_json|escapejs}}")
@@ -170,4 +305,5 @@
         }
     </script>
     <script src="{% static 'js/flatpickr.js' %}"></script>
+
 {% endblock section %}

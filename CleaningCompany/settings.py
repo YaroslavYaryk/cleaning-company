@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "widget_tweaks",
     "bootstrap_datepicker_plus",
+    "rest_framework",
     "worker.apps.WorkerConfig",
     "accounts.apps.AccountsConfig",
     "director.apps.DirectorConfig",

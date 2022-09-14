@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     get_shift_work_list,
     done_shift_work,
@@ -7,8 +7,10 @@ from .views import (
     edit_free_days,
     get_setup_dates_list,
 )
+from .api import urls as worker_api
 
 urlpatterns = [
+    path("api/", include(worker_api)),
     path("shifts/", get_shift_work_list, name="get_shift_work_list"),
     path("<worker_job_id>/done/", done_shift_work, name="done_shift_work"),
     path("add_free_days/", add_free_days, name="add_free_days"),

@@ -27,6 +27,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("director/", include("director.urls")),
     path("worker/", include("worker.urls")),
+    path("api-auth/", include("rest_framework.urls")),
     # serve
     #
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

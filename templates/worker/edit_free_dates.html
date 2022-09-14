@@ -32,8 +32,8 @@
                                     <input class="form-control datetimepicker"
                                            id="timepicker2"
                                            name="datepicker"
-                                           value="{{ dates_list }}"
                                            type="text"
+                                           value="{{dates_list}}"
                                            placeholder="d/m/y to d/m/y"
                                            data-options='{"mode":"range","dateFormat":"m-d-y","disableMobile":true}'/>
                                     <div class="block_error" style=""></div>
@@ -41,7 +41,7 @@
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1">
                                         <label style="margin-bottom: 0px;" class="label" for="password">Setup worker</label>
-                                        <div class="">{{ form.setup_worker|add_class:"form-control" }}</div>
+                                        <div class="" disabled="true">{{ form.setup_worker|add_class:"form-control user-value" }}</div>
                                         <div class="form-error">{{ form.setup_worker.errors }}</div>
                                     </div>
                                 </div>
@@ -62,12 +62,37 @@
     <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
     <script type="text/javascript">
         function isBigger(d1, d2) {
+            console.log(d1 , d2)
             return d1 >= d2
           }
 
-
+          function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = cookies[i].trim();
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
+          
         var timepicker2 = document.getElementById("timepicker2")
+        if(!timepicker2.value){
+            document.querySelector(".user-value").disabled = true
+            document.querySelector(".button_create").disabled = true
+
+        }
+        let user = '{{free_date.setup_worker.id}}';
+        console.log(user)
         timepicker2.onchange = (e) =>{
+            var values;
             var value = e.target.value.split(" to ")
             if (value.length == 2){
                 console.log(value)
@@ -78,12 +103,91 @@
                     block_error.style.display = "block"
                     block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">Date is in the past</p>`
                     button_create.classList.add("disabled")
-
+                    document.querySelector(".user-value").disabled = true
                     button_create.onclick = (e)=>{e.preventDefault()}
                 }else{
+                    values=value
                     block_error.style.display = "none"
                     button_create.classList.remove("disabled")
                     button_create.onclick = (e)=>{}
+                    document.querySelector(".user-value").disabled = false
+
+                    if(values && user){
+                        const url=`http://127.0.0.1:8000/worker/api/worker/${user}/taken_free_dates/`
+                        fetch(url, {
+                            method:"POST", 
+                            body: JSON.stringify({
+                                date: values
+                            }), 
+                            headers:{
+                                'X-CSRFToken':csrftoken,
+                                'Content-type':'application/json',
+                            }
+                        })
+                        .then((resp) => resp.json())
+                        .then(function(data){
+                            var parsedData = JSON.parse(data).data
+                            console.log(JSON.parse(data))
+                            if (!parsedData){
+                                console.log("here")
+                                document.querySelector(".button_create").disabled = false
+                                console.log(document.querySelector(".button_create"))
+                                return
+
+                            }else{
+                                var block_error = document.querySelector(".block_error")
+                                var first_date = new Date(parsedData[0])
+                                var second_date = new Date(parsedData[1])
+                                block_error.style.display = "block"
+                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`                            }
+                                document.querySelector(".button_create").disabled = true
+                        })
+                }}
+            }else{
+                var values = []
+                values.push(value[0]) 
+                values.push(value[0])
+            }
+            var userValue = document.querySelector(".user-value")
+            userValue.onchange = (event) =>{
+                const newUser = event.target.value
+                user = event.target.value
+                if (values && newUser){
+
+                    const url=`http://127.0.0.1:8000/worker/api/worker/${newUser}/taken_free_dates/`
+                    fetch(url, {
+                        method:"POST", 
+                        body: JSON.stringify({
+                            date: values
+                        }), 
+                        headers:{
+                            'X-CSRFToken':csrftoken,
+                            'Content-type':'application/json',
+                        }
+                    })
+                    .then((resp) => resp.json())
+                    .then(function(data){
+                        var parsedData = JSON.parse(data).data
+                        var type = JSON.parse(data).type
+                        console.log(JSON.parse(data).type)
+                        if (!parsedData){
+                            document.querySelector(".button_create").disabled = false
+                            return
+                        }else{
+                            var first_date = new Date(parsedData[0])
+                            var second_date = new Date(parsedData[1])
+                            
+                            var block_error = document.querySelector(".block_error")
+                            block_error.style.display = "block"
+                            if (type == "setup_dates"){
+                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+                            }else{
+                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+
+                            }
+                            document.querySelector(".button_create").disabled = true    
+                        }
+                    })
                 }
             }
         }

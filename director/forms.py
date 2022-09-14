@@ -9,13 +9,25 @@ class RoomCreate(forms.ModelForm):
         fields = ("name",)
 
 
+class DatePickerInput(forms.DateInput):
+    input_type = "date"
+
+
+class TimePickerInput(forms.TimeInput):
+    input_type = "time"
+
+
+class DateTimePickerInput(forms.DateTimeInput):
+    input_type = "datetime"
+
+
 class WorkerShiftCreate(forms.ModelForm):
 
     date = forms.DateTimeField(
-        input_formats=["%d/%m/%Y"],
+        input_formats=["%d/%m/%Y %H:%M"],
         widget=forms.DateTimeInput(
             attrs={
-                "class": "form-control datetimepicker",
+                "class": "",
                 "data-target": "#datetimepicker1",
             }
         ),
