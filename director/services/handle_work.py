@@ -1,5 +1,7 @@
 from copyreg import constructor
 import json
+
+from worker.models import WorkerShift
 from work.models import RoomWork, Room, Work, WorkerJob
 from django.utils.text import slugify
 import re
@@ -88,6 +90,7 @@ def add_room_works_to_shift(work, room_works):
 
 
 def get_all_shift_works(date_input):
+    print(date_input)
     if date_input == str(-1):
         find_date = date.today()
     else:
@@ -157,3 +160,7 @@ def get_searched_shifts(worker_email):
 
 def jsonify_users(users):
     return json.dumps([us.email for us in users])
+
+
+def get_shift_by_id(shift_id):
+    return WorkerShift.objects.get(pk=shift_id)

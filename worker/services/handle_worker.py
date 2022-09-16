@@ -39,6 +39,7 @@ def add_dates_to_free_dates(obj, dates):
         obj.start_date = datetime.strptime(new_dates[0].strip(), DATE_FORMAT)
         obj.end_date = datetime.strptime(new_dates[1].strip(), DATE_FORMAT)
     else:
+        print("here", dates)
         obj.start_date = datetime.strptime(new_dates[0], DATE_FORMAT)
         obj.end_date = datetime.strptime(new_dates[0], DATE_FORMAT)
 

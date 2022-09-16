@@ -56,7 +56,13 @@
                                                             {% if work.done %}
                                                                 <a class="btn btn-success disabled">Done</a>
                                                             {% else %}
-                                                                <a class="btn btn-success " href="{% url 'done_shift_work' work.id %}">Done</a>
+                                                                {% if search_date != '-1' and search_date != curr_date %}
+                                                                    <a class="btn btn-success disabled" href="{% url 'done_shift_work' work.id %}">Done</a>
+                                                                
+                                                                {% else %}
+
+                                                                    <a class="btn btn-success " href="{% url 'done_shift_work' work.id %}">Done</a>
+                                                                {% endif %}
                                                             {% endif %}
                                                         </div>
                                                     </td>

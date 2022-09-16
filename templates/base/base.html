@@ -50,7 +50,8 @@
                 </nav>
             </center>
         </header>
-        {% block messages %}
+        <div class="container">
+            {% block messages %}
             {% if messages %}
                 <div class="messages">
                     {% for message in messages %}
@@ -65,6 +66,7 @@
                 </div>
             {% endif %}
         {% endblock messages %}
+        </div>
         {% block section %}
         {% endblock section %}
         {% block javascript %}

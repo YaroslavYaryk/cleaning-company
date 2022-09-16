@@ -1,5 +1,5 @@
 from multiprocessing import context
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import ChangeForm, FreeDaysForm
 from django.contrib import messages
@@ -12,9 +12,10 @@ from datetime import date
 @login_required(login_url="login")
 def index(request):
     if request.user.admin:
-        return render(request, "director/homepage.html")
-
-    return render(request, "worker/homepage.html")
+        return redirect("get_workers_shifts_work_list", -1)
+        # return render(request, "director/homepage.html")
+    return redirect("get_shift_work_list", -1)
+    # return render(request, "worker/homepage.html")
 
 
 @login_required(login_url="login")
@@ -41,7 +42,9 @@ def done_shift_work(request, worker_job_id):
     except Exception as ex:
         print(ex)
 
-    return HttpResponseRedirect(reverse("get_shift_work_list"))
+    return HttpResponseRedirect(
+        reverse("get_shift_work_list", kwargs={"find_date": -1})
+    )
 
 
 @login_required(login_url="login")
@@ -63,6 +66,11 @@ def add_free_days(request):
                 )
             except Exception as ex:
                 print(ex)
+                if "duplicate key value" in str(ex):
+                    messages.error(request, str(ex).split(":")[-1])
+                else:
+                    messages.error(request, ex)
+                return HttpResponseRedirect(reverse("add_free_days"))
             # dates = request.POST["datepicker"].split("to")
             # first, second = dates[0].strip(), dates[1].strip()
             return HttpResponseRedirect(reverse("get_free_days_list"))
@@ -99,6 +107,13 @@ def edit_free_days(request, free_day_id):
                 )
             except Exception as ex:
                 print(ex)
+                if "duplicate key value" in str(ex):
+                    messages.error(request, str(ex).split(":")[-1])
+                else:
+                    messages.error(request, ex)
+                return HttpResponseRedirect(
+                    reverse("edit_free_days", kwargs={"free_day_id": free_day_id})
+                )
             # dates = request.POST["datepicker"].split("to")
             # first, second = dates[0].strip(), dates[1].strip()
             return HttpResponseRedirect(reverse("get_free_days_list"))

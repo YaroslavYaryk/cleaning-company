@@ -47,5 +47,8 @@ class FreeDates(models.Model):
 
     approved = models.CharField(max_length=100, default="null")
 
+    class Meta:
+        unique_together = ("user", "start_date", "end_date")
+
     def __str__(self):
         return f"{self.user.email} - {self.start_date} - {self.end_date} - (setup)-{self.setup_worker} - {self.approved}"

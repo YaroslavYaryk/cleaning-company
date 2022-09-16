@@ -120,7 +120,12 @@ def create_shift(request):
             work = handle_work.create_work(shift)
             handle_work.add_room_works_to_shift(work, room_works)
 
-            return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
+            return HttpResponseRedirect(
+                reverse(
+                    "get_workers_shifts_work_list",
+                    kwargs={"find_date": shift.date.strftime("%d-%m-%y")},
+                )
+            )
 
     rooms, rooms_json = handle_work.get_all_rooms()
     room_works, room_works_json = handle_work.get_room_works()
@@ -165,9 +170,15 @@ def edit_shift(request, shift_id):
         form = WorkerShiftCreate(workers, request.POST, instance=shift)
 
         if form.is_valid():
-            handle_work.update_existed_works(shift, request.POST)
+            new_shift = form.save()
+            handle_work.update_existed_works(new_shift, request.POST)
 
-            return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
+            return HttpResponseRedirect(
+                reverse(
+                    "get_workers_shifts_work_list",
+                    kwargs={"find_date": new_shift.date.strftime("%d-%m-%y")},
+                )
+            )
 
     form = WorkerShiftCreate(workers, instance=shift)
     rooms, rooms_json = handle_work.get_all_rooms()
@@ -209,11 +220,17 @@ def delete_worker_room_work(request, shift_id, room_id):
 def delete_worker_shift(request, shift_id):
 
     try:
+        shift = handle_work.get_shift_by_id(shift_id)
         handle_work.delete_whole_worker_shift(shift_id)
     except Exception as err:
         print(err)
 
-    return HttpResponseRedirect(reverse("get_workers_shifts_work_list"))
+    return HttpResponseRedirect(
+        reverse(
+            "get_workers_shifts_work_list",
+            kwargs={"find_date": shift.date.strftime("%d-%m-%y")},
+        )
+    )
 
 
 @login_required(login_url="login")

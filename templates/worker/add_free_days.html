@@ -20,12 +20,14 @@
                                     <h3 class="mb-4">Add free dates</h3>
                                 </div>
                             </div>
-                            {% if form.errors %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
-                                {% endfor %}
-                                {% for error in form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
-                            {% endif %}
+                            <div class="container">
+                                {% if form.errors %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
                             <form class="signin-form" method="POST">
                                 <div class="">{% csrf_token %}</div>
                                 <div class="form-row mb-3">
@@ -93,11 +95,12 @@
         timepicker2.onchange = (e) =>{
             var values;
             var value = e.target.value.split(" to ")
+            var block_error = document.querySelector(".block_error")
+            var button_create = document.querySelector(".button_create")
             if (value.length == 2){
                 console.log(value)
                 var firstDate = value[0].trim()
-                var block_error = document.querySelector(".block_error")
-                var button_create = document.querySelector(".button_create")
+                
                 if (! isBigger(new Date(firstDate), new Date())){
                     block_error.style.display = "block"
                     block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">Date is in the past</p>`
@@ -110,51 +113,66 @@
                     button_create.classList.remove("disabled")
                     button_create.onclick = (e)=>{}
                     document.querySelector(".user-value").disabled = false
+                    document.querySelector(".button_create").disabled = false
 
-                    if(values && user){
-                        const url=`http://127.0.0.1:8000/worker/api/worker/${user}/taken_free_dates/`
-                        fetch(url, {
-                            method:"POST", 
-                            body: JSON.stringify({
-                                date: values
-                            }), 
-                            headers:{
-                                'X-CSRFToken':csrftoken,
-                                'Content-type':'application/json',
-                            }
-                        })
-                        .then((resp) => resp.json())
-                        .then(function(data){
-                            var parsedData = JSON.parse(data).data
-                            var type = JSON.parse(data).type
-                            if (!parsedData){
-                                console.log("here")
-                                console.log(document.querySelector(".button_create"))
-                                document.querySelector(".button_create").disabled = false
-                                console.log(document.querySelector(".button_create"))
-                                return
 
-                            }else{
-                                var block_error = document.querySelector(".block_error")
-                                var first_date = new Date(parsedData[0])
-                                var second_date = new Date(parsedData[1])
-                                block_error.style.display = "block"
-                                if (type == "setup_dates"){
-                                    block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
-                                }else{
-                                    block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
-    
-                                }                                
-                                document.querySelector(".button_create").disabled = true
-                        })
-                }}
+                    }
             }else{
-                var values = []
-                values.push(value[0]) 
-                values.push(value[0])
+                if (! isBigger(new Date(value[0].trim()), new Date())){
+                    block_error.style.display = "block"
+                    block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">Date is in the past</p>`
+                    button_create.classList.add("disabled")
+                    document.querySelector(".user-value").disabled = true
+                    button_create.onclick = (e)=>{e.preventDefault()}
+                }else{
+                    var values = []
+                    values.push(value[0]) 
+                    values.push(value[0])
+                    document.querySelector(".user-value").disabled = false
+                
+                
+                }
+            }
+            if(values && user){
+                const url=`http://127.0.0.1:8000/worker/api/worker/${user}/taken_free_dates/`
+                fetch(url, {
+                    method:"POST", 
+                    body: JSON.stringify({
+                        date: values
+                    }), 
+                    headers:{
+                        'X-CSRFToken':csrftoken,
+                        'Content-type':'application/json',
+                    }
+                })
+                .then((resp) => resp.json())
+                .then(function(data){
+                    var parsedData = JSON.parse(data).data
+                    var type = JSON.parse(data).type
+                    console.log(parsedData, type)
+                    if (!parsedData){
+                        var block_error = document.querySelector(".block_error")
+                        block_error.style.display = "none"
+                        document.querySelector(".button_create").disabled = false
+                        return
+
+                    }else{
+                        var block_error = document.querySelector(".block_error")
+                        var first_date = new Date(parsedData[0])
+                        var second_date = new Date(parsedData[1])
+                        block_error.style.display = "block"
+                        if (type != "setup_dates"){
+                            block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+                        }else{
+                            block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+
+                        }                                
+                        document.querySelector(".button_create").disabled = true
+                }})
             }
             var userValue = document.querySelector(".user-value")
             userValue.onchange = (event) =>{
+                console.log(event.target.value)
                 const newUser = event.target.value
                 user = event.target.value
                 if (values && newUser){
@@ -174,8 +192,9 @@
                     .then(function(data){
                         var parsedData = JSON.parse(data).data
                         var type = JSON.parse(data).type
-                        console.log(JSON.parse(data).type)
                         if (!parsedData){
+                            var block_error = document.querySelector(".block_error")
+                            block_error.style.display = "none"
                             document.querySelector(".button_create").disabled = false
                             return
                         }else{
@@ -184,7 +203,7 @@
                             
                             var block_error = document.querySelector(".block_error")
                             block_error.style.display = "block"
-                            if (type == "setup_dates"){
+                            if (type != "setup_dates"){
                                 block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
                             }else{
                                 block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
@@ -193,6 +212,11 @@
                             document.querySelector(".button_create").disabled = true    
                         }
                     })
+                }else if (!user.length){
+                    var block_error = document.querySelector(".block_error")
+                    block_error.style.display = "none"
+                    document.querySelector(".button_create").disabled = false
+                    return
                 }
             }
         }
