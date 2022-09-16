@@ -42,6 +42,11 @@ urlpatterns = [
         name="get_workers_shifts_work_list",
     ),
     path(
+        "workers_shifts_work_list/<find_date>/",
+        get_workers_shifts_work_list,
+        name="get_workers_shifts_work_list",
+    ),
+    path(
         "workers_shifts_work_list/search/<worker_email>/",
         search_worker_shift,
         name="search_worker_shift",

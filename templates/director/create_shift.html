@@ -43,7 +43,7 @@
                                         <div class="">{{ form.date|add_class:"form-control datetimepicker" }}</div>
                                         <div class="form-error">{{ form.date.errors }}</div>
                                     </div>
-                                    <div class="block_error" style=""></div>
+                                    <div class="block_error" style="margin-bottom: 10px;"></div>
                                 </div>
                                 <div class="form-row" style="">
                                     <div class="form-group col-md-12 mb-1 add_room_work_wrapper">
@@ -117,9 +117,7 @@
                 const newUser = event.target.value
                 user = event.target.value
                 if (user){
-                    console.log(document.querySelector(".datetimepicker").disabled)
                     document.querySelector(".datetimepicker").disabled = false
-                    console.log(document.querySelector(".datetimepicker").disabled)
 
                     
                 }
@@ -140,7 +138,7 @@
                     .then(function(data){
                         var parsedData = JSON.parse(data).data
                         var type = JSON.parse(data).type
-                        console.log(JSON.parse(data).type)
+                        var type = JSON.parse(data).type
                         if (!parsedData){
                             document.querySelector(".button_create").disabled = false
                             return
@@ -171,7 +169,6 @@
                             block_error.style.display = "block"
                             block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">Date is in the past</p>`
                             document.querySelector(".button_create").disabled = true
-                            document.querySelector(".datetimepicker").disabled = true
                             button_create.onclick = (e)=>{e.preventDefault()}
                         }else{
                             var valuesData = []
@@ -181,7 +178,6 @@
                             block_error.style.display = "none"
                             document.querySelector(".button_create").disabled = false
                             button_create.onclick = (e)=>{}
-                            document.querySelector(".datetimepicker").disabled = true
                             if(values && user){
                                 const url=`http://127.0.0.1:8000/worker/api/worker/${user}/taken_free_dates/`
                                 fetch(url, {
@@ -197,7 +193,7 @@
                                 .then((resp) => resp.json())
                                 .then(function(data){
                                     var parsedData = JSON.parse(data).data
-                                    
+                                    var type = JSON.parse(data).type
                                     if (!parsedData){
                                         console.log("here")
                                         document.querySelector(".button_create").disabled = false
@@ -208,7 +204,12 @@
                                         var first_date = new Date(parsedData[0])
                                         var second_date = new Date(parsedData[1])
                                         block_error.style.display = "block"
-                                        block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`                            }
+                                        if (type == "setup_dates"){
+                                            block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+                                        }else{
+                                            block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+            
+                                        }                                        
                                         document.querySelector(".button_create").disabled = true
                                 })
                         }}

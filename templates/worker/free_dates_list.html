@@ -62,9 +62,15 @@
                                     {% endif %}
                                 </td>
                                 <td >
-                                    <a class="btn btn-outline-info me-1 mb-1 "
-                                       style="padding:5px 10px 5px 10px"
-                                       href="{% url 'edit_free_days' free_day.id %}">Edit</a>
+                                    {% if free_day.approved == "null" %}
+                                        <a class="btn btn-outline-info me-1 mb-1 "
+                                        style="padding:5px 10px 5px 10px"
+                                        href="{% url 'edit_free_days' free_day.id %}">Edit</a>
+                                    {% else %}
+                                        <a class="btn btn-outline-info me-1 mb-1 disabled"
+                                        style="padding:5px 10px 5px 10px"
+                                        href="{% url 'edit_free_days' free_day.id %}">Edit</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

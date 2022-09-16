@@ -126,7 +126,7 @@
                         .then((resp) => resp.json())
                         .then(function(data){
                             var parsedData = JSON.parse(data).data
-                            
+                            var type = JSON.parse(data).type
                             if (!parsedData){
                                 console.log("here")
                                 console.log(document.querySelector(".button_create"))
@@ -139,7 +139,12 @@
                                 var first_date = new Date(parsedData[0])
                                 var second_date = new Date(parsedData[1])
                                 block_error.style.display = "block"
-                                block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`                            }
+                                if (type == "setup_dates"){
+                                    block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is already free from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+                                }else{
+                                    block_error.innerHTML = `<p style="color:red; margin-bottom:-10px">This worker is busy from ${first_date.toLocaleDateString()} to ${second_date.toLocaleDateString()}</p>`
+    
+                                }                                
                                 document.querySelector(".button_create").disabled = true
                         })
                 }}

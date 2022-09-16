@@ -1,3 +1,5 @@
+from datetime import date
+import json
 from multiprocessing import context
 from types import NoneType
 from django.shortcuts import render
@@ -57,7 +59,6 @@ def edit_room(request, room_slug):
             room = form.save(commit=False)
             room.slug = slugify(room.name)
             room.save()
-            print(request.POST)
             keys = "/".join(request.POST.keys())
             template = r"room_component_[0-9][0-9]?[0-9]?[0-9]?[0-9]?[0-9]?"
             proper_keys = re.findall(template, keys)
@@ -135,15 +136,17 @@ def create_shift(request):
 
 
 @login_required(login_url="login")
-def get_workers_shifts_work_list(request):
+def get_workers_shifts_work_list(request, find_date):
 
-    shift_works = handle_work.get_all_shift_works()
+    shift_works = handle_work.get_all_shift_works(find_date)
 
     context = {
         "shift_works": shift_works,
         "aval_workers": handle_work.jsonify_users(
             handle_user.get_all_workers(request.user)
         ),
+        "search_date": find_date,
+        "curr_date": date.today().strftime("%d-%m-%y"),
     }
 
     return render(request, "director/workers_shifts_work_list.html", context)
@@ -180,8 +183,13 @@ def edit_shift(request, shift_id):
         "works_for_category": works_for_category,
         "used_rooms": used_rooms,
         "spec_name": "work_Select_",
+        "shift_date": json.dumps(
+            [
+                str(shift.date),
+                str(shift.date),
+            ]
+        ),
     }
-    print(room_works_json)
 
     return render(request, "director/edit_shift.html", context)
 

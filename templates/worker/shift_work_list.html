@@ -4,51 +4,98 @@
 {% load director_tags %}
 {% block link %}
     <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/falcon/flatpickr.min.css' %}">
+
 {% endblock link %}
 {% block section %}
     <div class="container mt-3" style="">
         <div class="block-wrapper">
-            {% for shift in shifts %}
-                <div class="card mb-2">
-                    <div class="card-header" style="font-weight: bold;">{{ shift.worker_shift.shift }}</div>
-                    <div class="card-body">
-                        <div class="block">
-                            <div class="table-responsive scrollbar">
-                                <table class="table table-bordered overflow-hidden">
-                                    <colgroup>
-                                        <col class="bg-soft-primary" />
-                                        <col />
-                                        <col />
-                                    </colgroup>
-                                    <thead>
-                                        <tr class="btn-reveal-trigger">
-                                            <th scope="col">Name</th>
-                                            <th class="text-end" scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for work in shift.worker_job.all %}
+            <div class="blockDate" style="display: flex; justify-content:space-between">
+                <div class="span"></div>
+                <div class="form-group" style="display: flex; gap:10px; align-items:center" >
+                    {% if search_date != '-1' and search_date != curr_date %}
+                        <a style="btn btn-success" href="{% url 'get_shift_work_list' -1 %}">today</a>
+                    {% endif %}
+                    {% if search_date == '-1' or search_date == curr_date %}
+                        <input class="form-control datetimepicker" value="{{curr_date}}" id="datepicker" type="text" placeholder="dd-mm-yy" data-options='{"dateFormat":"d-m-y"}'>
+                    {% else %}
+                        <input class="form-control datetimepicker" value="{{search_date}}" id="datepicker" type="text" placeholder="dd-mm-yy" data-options='{"dateFormat":"d-m-y"}'>
+                    {% endif %}
+                    <button type="submit" class="btn btn-outline-success date_search">Search</button>
+                </div>
+            </div>
+            {% if shifts %}
+                {% for shift in shifts %}
+                    <div class="card mb-2">
+                        <div class="card-header" style="font-weight: bold; display: flex; justify-content:space-between">
+                            <div class="block">{{ shift.worker_shift.shift }}</div>
+                            <div class="block">{{ shift.worker_shift.date }}</div>
+
+                        </div>
+                        <div class="card-body">
+                            <div class="block">
+                                <div class="table-responsive scrollbar">
+                                    <table class="table table-bordered overflow-hidden">
+                                        <colgroup>
+                                            <col class="bg-soft-primary" />
+                                            <col />
+                                            <col />
+                                        </colgroup>
+                                        <thead>
                                             <tr class="btn-reveal-trigger">
-                                                <td style="width:100%">{{ work.room_work.name }}</td>
-                                                <td style="width:100%" class="text-end">
-                                                    <div class="block_button_done">
-                                                        {% if work.done %}
-                                                            <a class="btn btn-success disabled">Done</a>
-                                                        {% else %}
-                                                            <a class="btn btn-success " href="{% url 'done_shift_work' work.id %}">Done</a>
-                                                        {% endif %}
-                                                    </div>
-                                                </td>
+                                                <th scope="col">Name</th>
+                                                <th class="text-end" scope="col">Actions</th>
                                             </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {% for work in shift.worker_job.all %}
+                                                <tr class="btn-reveal-trigger">
+                                                    <td style="width:100%">{{ work.room_work.name }}</td>
+                                                    <td style="width:100%" class="text-end">
+                                                        <div class="block_button_done">
+                                                            {% if work.done %}
+                                                                <a class="btn btn-success disabled">Done</a>
+                                                            {% else %}
+                                                                <a class="btn btn-success " href="{% url 'done_shift_work' work.id %}">Done</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p>For this date current user doesnt have any shift</p>
+            {% endif %}
         </div>
     </div>
-    <script type="text/javascript"></script>
+    <script src="{% static 'js/flatpickr.js' %}"></script>
+    <script type="text/javascript">
+        var date_search = document.querySelector(".date_search")
+        var datepicker = document.querySelector("#datepicker")
+        if (!datepicker.value){
+            console.log("here")
+            document.querySelector(".date_search").disabled=true
+        }
+        var dateValue;
+
+        datepicker.onchange = (e) =>{
+            dateValue = e.target.value
+            document.querySelector(".date_search").disabled=false
+        }
+        date_search.onclick = (e) =>{
+            e.preventDefault()
+            console.log(dateValue)
+            var url = `{% url 'get_shift_work_list' 123  %}`
+            document.location.href = url.replace('123', dateValue); 
+
+        }
+
+        
+    </script>
 {% endblock section %}

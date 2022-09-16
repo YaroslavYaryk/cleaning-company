@@ -1,7 +1,7 @@
 from worker.models import WorkerShift, FreeDates
 from work.models import Work, WorkerJob
 from accounts.models import User
-from datetime import datetime
+from datetime import datetime, date
 from accounts.services import handle_user
 from django.db.models import Q
 
@@ -12,8 +12,14 @@ def get_shift_by_id(shift_id):
     return WorkerShift.objects.get(id=shift_id)
 
 
-def get_shift_by_user(user):
-    return Work.objects.filter(worker_shift__user=user)
+def get_shift_by_user(user, date_input):
+
+    if date_input == str(-1):
+        find_date = date.today()
+    else:
+        find_date = datetime.strptime(date_input, "%d-%m-%y")
+
+    return Work.objects.filter(worker_shift__user=user, worker_shift__date=find_date)
 
 
 def done_shift_work(worker_job_id):

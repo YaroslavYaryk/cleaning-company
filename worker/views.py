@@ -6,6 +6,7 @@ from django.contrib import messages
 from worker.services import handle_worker
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse, reverse_lazy
+from datetime import date
 
 
 @login_required(login_url="login")
@@ -17,13 +18,17 @@ def index(request):
 
 
 @login_required(login_url="login")
-def get_shift_work_list(request):
+def get_shift_work_list(request, find_date):
 
     user = request.user
 
-    shifts = handle_worker.get_shift_by_user(user)
+    shifts = handle_worker.get_shift_by_user(user, find_date)
 
-    contex = {"shifts": shifts}
+    contex = {
+        "shifts": shifts,
+        "search_date": find_date,
+        "curr_date": date.today().strftime("%d-%m-%y"),
+    }
 
     return render(request, "worker/shift_work_list.html", contex)
 

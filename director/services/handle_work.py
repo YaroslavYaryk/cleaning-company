@@ -3,6 +3,7 @@ import json
 from work.models import RoomWork, Room, Work, WorkerJob
 from django.utils.text import slugify
 import re
+from datetime import datetime, date
 
 
 def create_room_work(room, name):
@@ -86,8 +87,13 @@ def add_room_works_to_shift(work, room_works):
         work.worker_job.add(WorkerJob.objects.create(room_work=room_work))
 
 
-def get_all_shift_works():
-    return Work.objects.all()
+def get_all_shift_works(date_input):
+    if date_input == str(-1):
+        find_date = date.today()
+    else:
+        find_date = datetime.strptime(date_input, "%d-%m-%y")
+
+    return Work.objects.filter(worker_shift__date=find_date)
 
 
 def get_worker_jobs_shift(shift_id):
