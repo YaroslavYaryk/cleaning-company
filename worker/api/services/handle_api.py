@@ -1,13 +1,11 @@
 from worker.models import FreeDates
-from worker.services.handle_worker import DATE_FORMAT
 from datetime import datetime
-import json
 
 NEW_DATE_FORMAT = "%Y-%m-%d"
+DATE_FORMAT = "%m-%d-%y"
 
 
 def is_overlapped(range_1, time_range):
-    print(max(range_1[0], time_range[0]), min(range_1[1], time_range[1]))
     return max(range_1[0], time_range[0]) <= min(range_1[1], time_range[1])
 
 

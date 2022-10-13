@@ -1,5 +1,6 @@
 from django.db import models
 from worker.models import WorkerShift
+from django.utils.text import slugify
 
 # Create your models here.
 class Room(models.Model):
@@ -8,6 +9,10 @@ class Room(models.Model):
     slug = models.SlugField(
         max_length=255, unique=True, db_index=True, verbose_name="URL", null=True
     )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Room, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -29,6 +34,7 @@ class WorkerJob(models.Model):
     room_work = models.ForeignKey(
         RoomWork, verbose_name=("room_work"), on_delete=models.CASCADE
     )
+    time = models.TimeField(null=True, blank=True)
     done = models.BooleanField(default=False)
 
     def __str__(self):

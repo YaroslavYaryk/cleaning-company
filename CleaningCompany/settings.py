@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "bootstrap_datepicker_plus",
     "rest_framework",
+    "rest_framework.authtoken",  # <-- Here
+    "django_rest_passwordreset",
+    # app
     "worker.apps.WorkerConfig",
     "accounts.apps.AccountsConfig",
     "director.apps.DirectorConfig",
@@ -150,3 +153,15 @@ EMAIL_USE_TLS = True
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    )
+}

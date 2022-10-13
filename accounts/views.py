@@ -86,9 +86,7 @@ def get_profile(request, user_id):
 
     user = handle_user.get_user_by_id(user_id)
 
-    context = {
-        "user": user,
-    }
+    context = {"user": user, "new_style": True}
 
     return render(request, "base/profile.html", context=context)
 
@@ -114,7 +112,7 @@ def get_profile_edit(request, user_id):
 
     form = ChangeForm(instance=user)
 
-    context = {"user": user, "form": form}
+    context = {"user": user, "form": form, "new_style": True}
 
     return render(request, "base/profile_edit.html", context=context)
 

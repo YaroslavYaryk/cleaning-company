@@ -4,11 +4,25 @@
 {% block link %}
     <link rel="stylesheet" href="{% static 'css/director/create_room.css' %}">
     <link rel="stylesheet" href="{% static 'css/falcon/flatpickr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/director/room_list.css' %}">
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 {% endblock link %}
 {% block section %}
     <div class="container">
+        <div style="margin-top: 15px;">
+            <div class="block_search" style="display: flex; ">
+                <input class="form-control"
+                       placeholder="Search (by email)"
+                       type="text"
+                       id="input"/>
+                <a class="btn btn-primary" id="search_button" href="">Search</a>
+                <a class="btn btn-secondary" id="" href="{% url 'get_workers_free_dates' %}">All</a>
+            </div>
+            <ul id="suggestions" type="none">
+            </ul>
+        </div>
         <div class="table-responsive scrollbar">
             {% if free_dates %}
                 <table class="table table-hover table-striped overflow-hidden">
@@ -60,12 +74,18 @@
                                                 <i class="bi bi-check"></i>
                                             </h6>
                                         </span>
+                                        <a class="btn btn-danger"
+                                               style="padding:2px 5px 2px 5px"
+                                               href="{% url 'refuse_worker_free_date' free_day.id %}">Refuse</a>
                                     {% else %}
                                         <span style="padding:5px" class="badge badge-danger">Refused
                                             <h6 style="margin-left: 10px; display: inline;">
                                                 <i class="bi bi-x"></i>
                                             </h6>
                                         </span>
+                                        <a class="btn btn-success"
+                                               style="padding:2px 5px 2px 5px"
+                                               href="{% url 'approve_worker_free_date' free_day.id %}">Approve</a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -77,4 +97,47 @@
             {% endif %}
         </div>
     </div>
+
+<script type="text/javascript">
+    "use strict";
+    let inputField = document.getElementById('input');
+        let ulField = document.getElementById('suggestions');
+        inputField.addEventListener('input', changeAutoComplete);
+        ulField.addEventListener('click', selectItem);
+        function changeAutoComplete({ target }) {
+            let data = target.value;
+            ulField.innerHTML = ``;
+            if (data.length) {
+            let autoCompleteValues = autoComplete(data);
+            autoCompleteValues.forEach(value => { addItem(value); });
+            }
+        }
+        function autoComplete(inputValue) {
+            let destination = JSON.parse("{{aval_workers|escapejs}}")
+            return destination.filter(
+            (value) => value.toLowerCase().includes(inputValue.toLowerCase())
+            );
+        }
+        
+        function addItem(value) {
+            ulField.innerHTML = ulField.innerHTML + `<li class="search_list_item">${value}</li>`;
+        }
+        
+        function selectItem({ target }) {
+            if (target.tagName === 'LI') {
+            inputField.value = target.textContent;
+            ulField.innerHTML = ``;
+            }
+        }
+
+        var search_button = document.getElementById('search_button');
+        search_button.onclick = (e) =>{
+            e.preventDefault()
+            console.log(input.value)
+            var url = `{% url 'get_worker_free_dates' 123  %}`
+            document.location.href = url.replace('123', input.value); 
+        }
+
+</script>
+
 {% endblock section %}

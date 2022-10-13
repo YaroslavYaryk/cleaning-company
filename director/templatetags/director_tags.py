@@ -33,3 +33,9 @@ def id_by_name(room_name):
 @register.filter
 def random_number(string):
     return f"{string}{randint(0,100000)}"
+
+
+@register.filter
+def get_time(elem):
+    print(elem.time)
+    return 1

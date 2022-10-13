@@ -152,6 +152,7 @@ def get_workers_shifts_work_list(request, find_date):
         ),
         "search_date": find_date,
         "curr_date": date.today().strftime("%d-%m-%y"),
+        "today": date.today(),
     }
 
     return render(request, "director/workers_shifts_work_list.html", context)
@@ -243,6 +244,7 @@ def search_worker_shift(request, worker_email):
         "aval_workers": handle_work.jsonify_users(
             handle_user.get_all_workers(request.user)
         ),
+        "today": date.today(),
     }
 
     return render(request, "director/workers_shifts_work_list.html", context)
@@ -253,7 +255,22 @@ def get_workers_free_dates(request):
 
     all_free_dates = handle_worker.get_workers_free_dates()
 
-    context = {"free_dates": all_free_dates}
+    context = {
+        "free_dates": all_free_dates,
+        "aval_workers": handle_work.jsonify_users(
+            handle_user.get_all_workers(request.user)
+        ),
+    }
+
+    return render(request, "director/workers_free_dates_list.html", context)
+
+
+@login_required(login_url="login")
+def get_worker_free_dates(request, email):
+
+    worker_free_dates = handle_worker.get_worker_free_dates(email)
+
+    context = {"free_dates": worker_free_dates}
 
     return render(request, "director/workers_free_dates_list.html", context)
 

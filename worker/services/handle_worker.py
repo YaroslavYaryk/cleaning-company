@@ -3,7 +3,8 @@ from work.models import Work, WorkerJob
 from accounts.models import User
 from datetime import datetime, date
 from accounts.services import handle_user
-from django.db.models import Q
+from datetime import datetime
+from worker.api.services import handle_api
 
 DATE_FORMAT = "%m-%d-%y"
 
@@ -25,6 +26,7 @@ def get_shift_by_user(user, date_input):
 def done_shift_work(worker_job_id):
 
     worker_job = WorkerJob.objects.get(pk=worker_job_id)
+    worker_job.time = datetime.now()
     worker_job.done = True
     worker_job.save()
 
@@ -91,6 +93,10 @@ def get_workers_free_dates():
     return FreeDates.objects.all()
 
 
+def get_worker_free_dates(email):
+    return FreeDates.objects.filter(user__email=email)
+
+
 def approve_free_date(free_date_id):
     print("here")
     obj = FreeDates.objects.get(id=free_date_id)
@@ -102,3 +108,7 @@ def refuse_free_date(free_date_id):
     obj = FreeDates.objects.get(id=free_date_id)
     obj.approved = "False"
     obj.save()
+
+
+def delete_free_date(pk):
+    FreeDates.objects.get(pk=pk).delete()

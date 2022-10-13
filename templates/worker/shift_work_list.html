@@ -44,14 +44,23 @@
                                         <thead>
                                             <tr class="btn-reveal-trigger">
                                                 <th scope="col">Name</th>
+                                                <th class="text-end" scope="col">Time</th>
                                                 <th class="text-end" scope="col">Actions</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for work in shift.worker_job.all %}
                                                 <tr class="btn-reveal-trigger">
-                                                    <td style="width:100%">{{ work.room_work.name }}</td>
-                                                    <td style="width:100%" class="text-end">
+                                                    <td style="width:90%">{{ work.room_work.name }}</td>
+                                                    <td style="width:100%">
+                                                        {% if work.time %}
+                                                            {{work.time}}
+                                                        {% else %}
+                                                            ---
+                                                        {% endif %}
+                                                    </td>
+                                                    <td style="" class="text-end">
                                                         <div class="block_button_done">
                                                             {% if work.done %}
                                                                 <a class="btn btn-success disabled">Done</a>

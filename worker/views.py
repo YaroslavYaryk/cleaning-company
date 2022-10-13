@@ -136,3 +136,13 @@ def get_setup_dates_list(request):
     context = {"setup_days": setup_days}
 
     return render(request, "worker/setup_dates_list.html", context)
+
+
+@login_required(login_url="login")
+def delete_free_date(request, pk):
+    try:
+        handle_worker.delete_free_date(pk)
+    except Exception as err:
+        messages.error(request, str(err))
+
+    return HttpResponseRedirect(reverse("get_free_days_list"))

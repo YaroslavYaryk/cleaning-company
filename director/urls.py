@@ -15,6 +15,7 @@ from .views import (
     get_workers_free_dates,
     approve_worker_free_date,
     refuse_worker_free_date,
+    get_worker_free_dates,
 )
 
 urlpatterns = [
@@ -52,6 +53,11 @@ urlpatterns = [
         name="search_worker_shift",
     ),
     path("workers_free_date/", get_workers_free_dates, name="get_workers_free_dates"),
+    path(
+        "workers_free_date/<email>/",
+        get_worker_free_dates,
+        name="get_worker_free_dates",
+    ),
     path(
         "approve_free_date/<free_date_id>/",
         approve_worker_free_date,

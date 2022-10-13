@@ -52,8 +52,13 @@
                                        id="room_component"
                                        name="{{ shift.id|room_component_id }}"
                                        class="btn btn-info">Components</a>
-                                    <a href="{% url 'edit_shift' shift.worker_shift.id %}"
-                                       class="btn btn-primary">Edit</a>
+                                    {% if shift.worker_shift.date > today %}
+                                         <a href="{% url 'edit_shift' shift.worker_shift.id %}"
+                                         class="btn btn-primary">Edit</a>
+                                    {% else %}
+                                         <a href="{% url 'edit_shift' shift.worker_shift.id %}"
+                                       class="btn btn-primary disabled">Edit</a>
+                                    {% endif %}
                                     <a href="{% url 'delete_worker_shift' shift.worker_shift.id %}"
                                        class="btn btn-danger">Delete</a>
                                 </div>
@@ -69,11 +74,15 @@
                                             <div class="block_icon">
                                                 {% if elem.done %}
                                                     <img src="{% static 'images/plus.png' %}" width="24px" alt="">
+                                                    
                                                 {% else %}
                                                     <img src="{% static 'images/minus.png' %}" width="24px" alt="">
                                                 {% endif %}
                                             </div>
-                                            <div class="block_text">{{ elem.room_work.name }}</div>
+                                            <div class="block_text">{{ elem.room_work.name }} 
+                                                {% if elem.done %}
+                                                ({{elem.time}}){% endif %}
+                                                </div>
                                         </div>
                                     </div>
                                 {% endfor %}

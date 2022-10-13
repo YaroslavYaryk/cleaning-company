@@ -90,7 +90,6 @@ def add_room_works_to_shift(work, room_works):
 
 
 def get_all_shift_works(date_input):
-    print(date_input)
     if date_input == str(-1):
         find_date = date.today()
     else:
@@ -135,10 +134,7 @@ def delete_old_works(shift, taken_rooms):
 
 def update_existed_works(shift, data):
     shift_work = Work.objects.get(worker_shift=shift)
-    taken_rooms = list(
-        {room.room_work.room.slug for room in shift_work.worker_job.all()}
-    )
-    delete_old_works(shift_work, taken_rooms)
+    shift_work.worker_job.all().delete()
     room_works = [slugify(elem) for elem in get_room_work_slugs(data)]
     # print(room_works)
     add_room_works_to_shift(shift_work, room_works)
@@ -164,3 +160,7 @@ def jsonify_users(users):
 
 def get_shift_by_id(shift_id):
     return WorkerShift.objects.get(pk=shift_id)
+
+
+def get_work_by_shift(shift):
+    return Work.objects.get(worker_shift=shift)

@@ -16,10 +16,11 @@
         {% block link2 %}
         {% endblock link2 %}
     </head>
-    <body style="background: #F2F8F3;">
-        <header>
+    <body style="background: #F2F8F3;" class="body_class">
+        <header >
             <center>
                 <nav>
+                    
                     <ul style="text-transform: uppercase;">
                         <li class="sub-menu-parent" tab-index="0">
                             <a style="text-decoration: none;" href="{% url 'home' %}">Home</a>
@@ -44,6 +45,7 @@
                                     <img src="{% static 'images/logout.png' %}" width="20"  alt="">
                                     <a style="; text-decoration: none;" href="{% url 'logout'  %}">Logout</a>
                                 </li>
+                                
                             </ul>
                         </li>
                     </ul>
@@ -71,5 +73,17 @@
         {% endblock section %}
         {% block javascript %}
         {% endblock javascript %}
+        <script type="text/javascript">
+
+            var body_class = document.querySelector(".body_class")
+            var specStyle = "{{new_style}}"
+            if (specStyle){
+                console.log("here")
+                body_class.style.cssText  = `
+                    margin-top:-0px
+                `
+            }
+
+        </script>
     </body>
 </html>

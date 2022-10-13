@@ -66,10 +66,16 @@
                                         <a class="btn btn-outline-info me-1 mb-1 "
                                         style="padding:5px 10px 5px 10px"
                                         href="{% url 'edit_free_days' free_day.id %}">Edit</a>
+                                        <a class="btn btn-outline-danger me-1 mb-1 "
+                                        style="padding:5px 10px 5px 10px"
+                                        href="{% url 'delete_free_date' free_day.id %}">Delete</a>
                                     {% else %}
                                         <a class="btn btn-outline-info me-1 mb-1 disabled"
                                         style="padding:5px 10px 5px 10px"
                                         href="{% url 'edit_free_days' free_day.id %}">Edit</a>
+                                        <a class="btn btn-outline-danger me-1 mb-1 disabled"
+                                        style="padding:5px 10px 5px 10px"
+                                        href="{% url 'delete_free_date' free_day.id %}">Delete</a>
                                     {% endif %}
                                 </td>
                             </tr>

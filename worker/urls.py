@@ -6,6 +6,7 @@ from .views import (
     get_free_days_list,
     edit_free_days,
     get_setup_dates_list,
+    delete_free_date,
 )
 from .api import urls as worker_api
 
@@ -17,4 +18,5 @@ urlpatterns = [
     path("free_dates_list/", get_free_days_list, name="get_free_days_list"),
     path("setup_dates_list/", get_setup_dates_list, name="get_setup_dates_list"),
     path("edit_free_days/<free_day_id>/", edit_free_days, name="edit_free_days"),
+    path("delete_free_date/<pk>/", delete_free_date, name="delete_free_date"),
 ]
